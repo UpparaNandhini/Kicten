@@ -247,7 +247,7 @@
 
   <!-- HEADER -->
   <div class="header">
-    <h1>👨🍳 Nandhu's <span>Kitchen Display System</span></h1>
+    <h1>Nandhu's <span>Kitchen Display System</span></h1>
     <div class="header-meta">
       <div class="clock" id="clock">12:00:00 PM</div>
       <button class="btn-reset" onclick="clearAllOrders()">Reset Orders</button>
@@ -374,11 +374,11 @@
         
         let actionsHTML = '';
         if (o.status === 'Pending') {
-          actionsHTML = `<button class="action-btn btn-prepare" onclick="updateStatus(${o.id}, 'Preparing')">👩🍳 Start Preparing</button>`;
+          actionsHTML = `<button class="action-btn btn-prepare" onclick="updateStatus(${o.id}, 'Preparing')">Start Preparing</button>`;
         } else if (o.status === 'Preparing') {
-          actionsHTML = `<button class="action-btn btn-serve" onclick="updateStatus(${o.id}, 'Served')">🟢 Serve Food</button>`;
+          actionsHTML = `<button class="action-btn btn-serve" onclick="updateStatus(${o.id}, 'Served')">Serve Food</button>`;
         } else {
-          actionsHTML = `<span style="font-size:12px;color:var(--green);font-weight:bold;">✓ Complete</span>`;
+          actionsHTML = `<span style="font-size:12px;color:var(--green);font-weight:bold;">Complete</span>`;
         }
 
         return `
@@ -423,10 +423,10 @@
 
       container.innerHTML = [...bookings].reverse().map(b => `
         <div class="book-card">
-          <h4>👤 ${b.name}</h4>
-          <p>📞 Phone: ${b.phone}</p>
-          <p>📅 Schedule: ${b.date} at ${b.time}</p>
-          <div class="book-meta">🏷️ ${b.guests} · ${b.seating}</div>
+          <h4>Name: ${b.name}</h4>
+          <p>Phone: ${b.phone}</p>
+          <p>Schedule: ${b.date} at ${b.time}</p>
+          <div class="book-meta">Details: ${b.guests} · ${b.seating}</div>
         </div>
       `).join('');
     }

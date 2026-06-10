@@ -186,13 +186,13 @@
 
 <!-- NAVBAR -->
 <nav class="nav">
-  <div class="nav-logo">🧑‍🍳 Nandhu's <span>Kitchen</span></div>
+  <div class="nav-logo">Nandhu's <span>Kitchen</span></div>
   <div class="nav-links">
     <a onclick="openQRScanner()">Scan for Menu</a>
     <a onclick="scrollToId('qr')">QR Code</a>
     <a onclick="scrollToId('zones')">Zones</a>
     <a onclick="scrollToId('book')">Book Table</a>
-    <button class="qr-btn" onclick="openQRScanner()">🤳 Scan QR</button>
+    <button class="qr-btn" onclick="openQRScanner()">Scan QR</button>
   </div>
 </nav>
 
@@ -228,8 +228,8 @@
     <button class="filter-btn" onclick="filterMenu('main', this)">Main Course</button>
     <button class="filter-btn" onclick="filterMenu('biryani', this)">Biryanis</button>
     <button class="filter-btn" onclick="filterMenu('dessert', this)">Desserts</button>
-    <button class="filter-btn" onclick="filterMenu('veg', this)">🥗 Vegetarian</button>
-    <button class="filter-btn" onclick="filterMenu('nonveg', this)">🍖 Non-Veg</button>
+    <button class="filter-btn" onclick="filterMenu('veg', this)">Vegetarian</button>
+    <button class="filter-btn" onclick="filterMenu('nonveg', this)">Non-Veg</button>
   </div>
   <div class="menu-grid" id="menuGrid"></div>
 </section>
@@ -254,12 +254,12 @@
   <p>Scan QR codes to explore menu, book table, or get dish details</p>
   <div class="qr-cards">
     <div class="qr-card" onclick="window.open('physical_menu_card.html', '_blank')" title="Click / Tap to open menu card directly">
-      <div class="qr-card-title">📜 Menu</div>
+      <div class="qr-card-title">Menu</div>
       <div id="qrcode-menu"></div>
       <div class="qr-card-sub">Tap or Scan to view full menu</div>
     </div>
     <div class="qr-card" onclick="scrollToId('book')" title="Click / Tap to reserve table now">
-      <div class="qr-card-title">🛎️ Book Table</div>
+      <div class="qr-card-title">Book Table</div>
       <div id="qrcode-book"></div>
       <div class="qr-card-sub">Tap or Scan to reserve now</div>
     </div>
@@ -310,8 +310,8 @@
         <option>Window Seat</option>
         <option>Corner Booth</option>
         <option>Private Area</option>
-        <option>🌌 Couple's Art Area</option>
-        <option>🎪 Kids Play Area</option>
+        <option>Couple's Art Area</option>
+        <option>Kids Play Area</option>
       </select>
     </div>
     <button class="submit-btn" onclick="bookTable()">Confirm Booking</button>
@@ -340,13 +340,13 @@
         <div class="flame"></div>
       </div>
       <div class="zone-body">
-        <div class="zone-title">🌌 Couple's Art Area</div>
+        <div class="zone-title">Couple's Art Area</div>
         <div class="zone-desc">A candlelit alcove adorned with local artwork and soft music. Perfect for date nights and special moments — enjoy curated tasting menus surrounded by rotating art installations.</div>
         <div class="zone-features">
-          <span class="zone-tag">🕯️ Candlelit Tables</span>
-          <span class="zone-tag">🖼️ Live Art Wall</span>
-          <span class="zone-tag">🍷 Mocktail Pairing</span>
-          <span class="zone-tag">💑 8 Seats</span>
+          <span class="zone-tag">Candlelit Tables</span>
+          <span class="zone-tag">Live Art Wall</span>
+          <span class="zone-tag">Mocktail Pairing</span>
+          <span class="zone-tag">8 Seats</span>
         </div>
         <button class="zone-cta" onclick="openArtModal()">Reserve Art Area</button>
       </div>
@@ -359,13 +359,13 @@
         <div class="flame"></div>
       </div>
       <div class="zone-body">
-        <div class="zone-title">🎪 Kids Play Area</div>
+        <div class="zone-title">Kids Play Area</div>
         <div class="zone-desc">Let little ones play while you dine! A safe, colourful corner with board games, colouring stations, and a dedicated kids' menu — so parents can relax and enjoy every bite.</div>
         <div class="zone-features">
-          <span class="zone-tag">🧩 Board Games</span>
-          <span class="zone-tag">🖍️ Colouring Station</span>
-          <span class="zone-tag">🍦 Kids' Menu</span>
-          <span class="zone-tag">👨‍👩‍👧 Family Friendly</span>
+          <span class="zone-tag">Board Games</span>
+          <span class="zone-tag">Colouring Station</span>
+          <span class="zone-tag">Kids' Menu</span>
+          <span class="zone-tag">Family Friendly</span>
         </div>
         <button class="zone-cta" onclick="openKidsModal()">View Play Area & Reserve</button>
       </div>
@@ -376,7 +376,7 @@
 
 <!-- FOOTER -->
 <footer class="footer">
-  <p>📍 42, MG Road, Indiranagar, Bengaluru · 📞 080-4567-8900</p>
+  <p>Address: 42, MG Road, Indiranagar, Bengaluru · Phone: 080-4567-8900</p>
   <p>© 2025 <span>Nandhu's Kitchen</span> · All rights reserved</p>
 </footer>
 
@@ -384,13 +384,13 @@
 <div class="qr-modal" id="qrModal">
   <div class="qr-modal-content">
     <div class="qr-modal-header">
-      <h3>🤳 Scan QR Code</h3>
+      <h3>Scan QR Code</h3>
       <p>Point your camera at a QR code to scan</p>
     </div>
     <div id="qr-reader" style="width: 100%;"></div>
     <div id="scanStatus" class="scan-status"></div>
     <div class="qr-controls">
-      <button class="qr-btn-view" onclick="closeQRScanner(); window.open('physical_menu_card.html', '_blank')">📄 Open Menu Card</button>
+      <button class="qr-btn-view" onclick="closeQRScanner(); window.open('physical_menu_card.html', '_blank')">Open Menu Card</button>
       <button class="qr-btn-close" onclick="closeQRScanner()">Close Scanner</button>
     </div>
   </div>
@@ -506,14 +506,13 @@ function showDishDetail(dishId) {
   
   const detailHTML = `
     <div class="dish-detail-img" style="background: url('${dish.img}?auto=format&fit=crop&w=500&q=80') center/cover;">
-      <span style="font-size:4rem;text-shadow:0 2px 8px rgba(0,0,0,.3)">${dish.emoji}</span>
     </div>
     <div class="dish-detail-body">
       <h2>${dish.name}</h2>
       <p class="desc">${dish.desc}</p>
       <div class="dish-detail-meta">
         <div class="meta-badge">
-          ${dish.type === 'veg' ? '🥬 Vegetarian' : '🍗 Non-Vegetarian'}
+          ${dish.type === 'veg' ? 'Vegetarian' : 'Non-Vegetarian'}
         </div>
         ${dish.spicy > 0 ? `<div class="meta-badge">🌶 Spice Level: ${spicyDots(dish.spicy)}</div>` : '<div class="meta-badge">🌶 Mild</div>'}
         <div class="meta-badge">${dish.cat.toUpperCase()}</div>
@@ -703,8 +702,8 @@ function showScanStatus(message, type) {
 function bookZone(zoneName) {
   const seating = document.getElementById('seating');
   const map = {
-    "Couple's Art Area": "🌌 Couple's Art Area",
-    'Kids Play Area': "🎪 Kids Play Area"
+    "Couple's Art Area": "Couple's Art Area",
+    'Kids Play Area': "Kids Play Area"
   };
   for (let i = 0; i < seating.options.length; i++) {
     if (seating.options[i].text === map[zoneName]) {
