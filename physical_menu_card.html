@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nandhu's Kitchen - Full Menu</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: #1c0d08;
+    color: #FDF5E6;
+    font-family: 'DM Sans', sans-serif;
+    padding: 2rem;
+  }
+  .menu-page {
+    max-width: 800px;
+    margin: 0 auto;
+    background: #2a1610;
+    border: 2px solid #3d2016;
+    padding: 3rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+  }
+  .header {
+    text-align: center;
+    margin-bottom: 3rem;
+    border-bottom: 1px solid #3d2016;
+    padding-bottom: 2rem;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 3rem;
+    font-weight: 700;
+    color: #FDF5E6;
+  }
+  .logo span {
+    color: #E06000;
+  }
+  .tagline {
+    font-size: 1rem;
+    color: #A3A3A3;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-top: 0.5rem;
+  }
+  .category {
+    margin-bottom: 3rem;
+  }
+  .category-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem;
+    color: #E06000;
+    border-bottom: 1px solid #3d2016;
+    padding-bottom: 0.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+  .item-list {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+  .item {
+    display: flex;
+    flex-direction: column;
+  }
+  .item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 0.3rem;
+  }
+  .item-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #FDF5E6;
+  }
+  .item-price {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #E06000;
+    font-family: 'Playfair Display', serif;
+  }
+  .item-desc {
+    font-size: 0.85rem;
+    color: #A3A3A3;
+    line-height: 1.4;
+  }
+  .footer {
+    text-align: center;
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid #3d2016;
+    font-size: 0.85rem;
+    color: #A3A3A3;
+  }
+  
+  @media print {
+    body { background: none; padding: 0; color: #000; }
+    .menu-page { background: none; border: none; box-shadow: none; max-width: 100%; padding: 0; }
+    .logo, .item-name { color: #000; }
+    .item-desc, .tagline, .footer { color: #444; }
+    .logo span, .category-title, .item-price { color: #c04000; }
+    .header, .category-title, .footer { border-color: #ccc; }
+  }
+  
+  @media (max-width: 600px) {
+    .item-list { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="menu-page">
+    <div class="header">
+      <div class="logo">🧑‍🍳 Nandhu's <span>Kitchen</span></div>
+      <div class="tagline">Authentic Indian Cuisine</div>
+    </div>
+    
+    <div class="category">
+      <h2 class="category-title">Starters</h2>
+      <div class="item-list">
+        <div class="item"><div class="item-header"><div class="item-name">Paneer Tikka 🥦</div><div class="item-price">₹280</div></div><div class="item-desc">Smoky marinated cottage cheese cubes from the tandoor</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Veg Seekh Kebab 🥦</div><div class="item-price">₹240</div></div><div class="item-desc">Spiced vegetable and lentil kebabs on skewers</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Samosa Chaat 🥦</div><div class="item-price">₹160</div></div><div class="item-desc">Crispy samosas topped with tamarind chutney & sev</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Chicken Tikka 🍗</div><div class="item-price">₹340</div></div><div class="item-desc">Tender chicken marinated in yogurt and spices</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Mutton Seekh 🍖</div><div class="item-price">₹420</div></div><div class="item-desc">Minced mutton kebabs with fresh herbs, tandoor-grilled</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Prawn Koliwada 🍤</div><div class="item-price">₹480</div></div><div class="item-desc">Coastal-style crispy fried prawns with green chutney</div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">Main Course</h2>
+      <div class="item-list">
+        <div class="item"><div class="item-header"><div class="item-name">Dal Makhani 🥦</div><div class="item-price">₹260</div></div><div class="item-desc">Slow-cooked black lentils in buttery tomato gravy</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Palak Paneer 🥦</div><div class="item-price">₹290</div></div><div class="item-desc">Fresh spinach puree with soft cottage cheese</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Shahi Paneer 🥦</div><div class="item-price">₹320</div></div><div class="item-desc">Paneer in rich cashew and cream royal gravy</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Aloo Gobi Masala 🥦</div><div class="item-price">₹220</div></div><div class="item-desc">Potato and cauliflower tossed in aromatic spices</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Butter Chicken 🍗</div><div class="item-price">₹380</div></div><div class="item-desc">Tender chicken in iconic velvety tomato-butter sauce</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Mutton Rogan Josh 🍖</div><div class="item-price">₹520</div></div><div class="item-desc">Kashmiri lamb curry with whole spices and red gravy</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Goan Fish Curry 🐟</div><div class="item-price">₹440</div></div><div class="item-desc">Coconut-based tangy curry with fresh kingfish</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Chicken Chettinad 🍗</div><div class="item-price">₹400</div></div><div class="item-desc">Fiery South Indian chicken curry with kalpasi spice</div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">Biryanis</h2>
+      <div class="item-list">
+        <div class="item"><div class="item-header"><div class="item-name">Veg Dum Biryani 🥦</div><div class="item-price">₹320</div></div><div class="item-desc">Fragrant basmati rice layered with spiced vegetables</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Chicken Biryani 🍗</div><div class="item-price">₹420</div></div><div class="item-desc">Hyderabadi dum biryani with succulent chicken pieces</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Mutton Biryani 🍖</div><div class="item-price">₹550</div></div><div class="item-desc">Slow-cooked mutton biryani with caramelized onions</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Prawn Biryani 🍤</div><div class="item-price">₹520</div></div><div class="item-desc">Kerala-style biryani with juicy tiger prawns</div></div>
+      </div>
+    </div>
+
+    <div class="category">
+      <h2 class="category-title">Desserts</h2>
+      <div class="item-list">
+        <div class="item"><div class="item-header"><div class="item-name">Gulab Jamun</div><div class="item-price">₹120</div></div><div class="item-desc">Soft milk-solid dumplings soaked in rose syrup</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Rasmalai</div><div class="item-price">₹150</div></div><div class="item-desc">Chenna patties floating in saffron-scented cream</div></div>
+        <div class="item"><div class="item-header"><div class="item-name">Kulfi Falooda</div><div class="item-price">₹180</div></div><div class="item-desc">Indian ice cream with rose syrup and vermicelli</div></div>
+      </div>
+    </div>
+    
+    <div class="footer">
+      <p>Spice Garden Restaurant • 42 MG Road, Indiranagar, Bengaluru</p>
+      <p>Please let us know of any food allergies.</p>
+    </div>
+  </div>
+
+</body>
+</html>

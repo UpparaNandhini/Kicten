@@ -109,7 +109,7 @@ const server = http.createServer(async (req, res) => {
       const existing = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
       existing.push(booking);
       fs.writeFileSync(DATA_FILE, JSON.stringify(existing, null, 2), 'utf8');
-      console.log(`✅ New booking #${booking.id} — ${name} on ${date} at ${time}`);
+      console.log(`✨ New booking #${booking.id} — ${name} on ${date} at ${time}`);
       return sendJSON(res, 200, { success: true, booking });
     } catch (err) {
       console.error('Save error:', err);
@@ -151,7 +151,7 @@ const server = http.createServer(async (req, res) => {
       const existing = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
       existing.push(order);
       fs.writeFileSync(ORDERS_FILE, JSON.stringify(existing, null, 2), 'utf8');
-      console.log(`✅ New order #${order.id} — ${order.table} | ₹${order.total}`);
+      console.log(`🍔 New order #${order.id} — ${order.table} | ₹${order.total}`);
       return sendJSON(res, 200, { success: true, order });
     } catch (err) {
       console.error('Order save error:', err);
@@ -182,7 +182,7 @@ const server = http.createServer(async (req, res) => {
       if (!order) return sendJSON(res, 404, { success: false, message: 'Order not found.' });
       order.status = status;
       fs.writeFileSync(ORDERS_FILE, JSON.stringify(existing, null, 2), 'utf8');
-      console.log(`✏️  Order #${id} → ${status}`);
+      console.log(`🔄  Order #${id} → ${status}`);
       return sendJSON(res, 200, { success: true, order });
     } catch (err) {
       return sendJSON(res, 500, { success: false, message: 'Server error.' });
@@ -193,7 +193,7 @@ const server = http.createServer(async (req, res) => {
   if (req.method === 'POST' && pathname === '/api/orders/clear') {
     try {
       fs.writeFileSync(ORDERS_FILE, '[]', 'utf8');
-      console.log('🧹 All kitchen orders cleared.');
+      console.log('🗑️ All kitchen orders cleared.');
       return sendJSON(res, 200, { success: true });
     } catch {
       return sendJSON(res, 500, { success: false, message: 'Could not clear orders.' });
@@ -204,12 +204,12 @@ const server = http.createServer(async (req, res) => {
   // Route / and /menu to the main HTML
   let file = pathname;
   if (pathname === '/' || pathname === '/menu') {
-    file = 'spice_garden_restaurant.html';
+    file = 'index.html';
   } else if (pathname === '/kitchen') {
     file = 'kitchen.html';
   } else if (pathname === '/book') {
     // /book route also serves main HTML (router handles it via ?mode=book)
-    file = 'spice_garden_restaurant.html';
+    file = 'index.html';
   }
 
   const filePath = path.join(PUBLIC, file);
@@ -234,12 +234,12 @@ const server = http.createServer(async (req, res) => {
 server.listen(PORT, HOST, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════════════╗');
-  console.log("║        🍽️  Nandhu's Kitchen — Server Running         ║");
+  console.log("║        👨‍🍳  Nandhu's Kitchen — Server Running         ║");
   console.log('╠══════════════════════════════════════════════════════╣');
   console.log(`║  Local:    http://localhost:${PORT}                     ║`);
   console.log(`║  Network:  http://${LAN_IP}:${PORT}              ║`);
   console.log('║                                                      ║');
-  console.log('║  QR codes → auto-point to your real LAN IP above 📱  ║');
+  console.log('║  QR codes → auto-point to your real LAN IP above 🔗  ║');
   console.log('║  Kitchen:  http://localhost:3000/kitchen             ║');
   console.log('╚══════════════════════════════════════════════════════╝');
   console.log('');

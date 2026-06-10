@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Printable Menu Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: #e0e0e0;
+    font-family: 'DM Sans', sans-serif;
+  }
+  .card {
+    width: 5in;
+    height: 7in;
+    background: linear-gradient(rgba(28, 13, 8, 0.9), rgba(28, 13, 8, 0.9)), url('nat_1.png') center/cover;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 2px solid #3d2016;
+    padding: 2rem;
+    text-align: center;
+    color: #FDF5E6;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    inset: 10px;
+    border: 1px solid rgba(253, 245, 230, 0.3);
+    pointer-events: none;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+  .logo span {
+    color: #E06000;
+  }
+  .tagline {
+    font-size: 0.85rem;
+    color: #A3A3A3;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 2.5rem;
+  }
+  .qr-container {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  }
+  .qr-container img {
+    width: 2.5in;
+    height: 2.5in;
+    display: block;
+  }
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.8rem;
+    color: #E06000;
+    margin-bottom: 0.5rem;
+  }
+  p {
+    font-size: 0.95rem;
+    color: #FDF5E6;
+    line-height: 1.5;
+  }
+  .footer-text {
+    position: absolute;
+    bottom: 2rem;
+    font-size: 0.75rem;
+    color: #888;
+    letter-spacing: 1px;
+  }
+  
+  @media print {
+    body { background: none; }
+    .card { box-shadow: none; margin: 0; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="card">
+    <div class="logo">🧑‍🍳 Nandhu's <span>Kitchen</span></div>
+    <div class="tagline">Authentic Indian Cuisine</div>
+    
+    <div class="qr-container" style="display: flex; justify-content: center; align-items: center; background: #fff; padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem;">
+      <div id="qrcode-printable" style="width: 2.2in; height: 2.2in; display: flex; justify-content: center; align-items: center;"></div>
+    </div>
+    
+    <h2>Scan to View Menu</h2>
+    <p>Point your phone's camera at the<br>QR code to explore our delicious offerings.</p>
+    
+    <div class="footer-text">Enjoy Your Dining Experience</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    const menuUrl = new URL('physical_menu_card.html', window.location.href).href;
+    
+    try {
+      new QRCode(document.getElementById('qrcode-printable'), {
+        text: menuUrl,
+        width: 160,
+        height: 160,
+        colorDark:  '#1c0d08',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.H
+      });
+    } catch (e) {
+      document.getElementById('qrcode-printable').innerHTML = 
+        `<img src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(menuUrl)}" alt="QR Code" style="width:160px;height:160px;display:block;" />`;
+    }
+  </script>
+
+</body>
+</html>
