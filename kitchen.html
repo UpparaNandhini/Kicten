@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nandhu's Kitchen — Real-Time Kitchen Display System</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #0F172A;
+    --darker: #020617;
+    --card-bg: #1E293B;
+    --teal: #0D9488;
+    --teal-light: #14B8A6;
+    --gold: #D97706;
+    --red: #EF4444;
+    --green: #22C55E;
+    --border: rgba(255,255,255,0.08);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--darker);
+    color: #F8FAFC;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--dark);
+    padding: 1rem 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+  }
+  .header h1 span { color: var(--teal-light); }
+  .header-meta {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+  .clock {
+    font-size: 14px;
+    font-weight: bold;
+    color: rgba(255,255,255,0.6);
+  }
+  .btn-reset {
+    background: transparent;
+    color: var(--red);
+    border: 1px solid var(--red);
+    padding: 0.4rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn-reset:hover {
+    background: var(--red);
+    color: #fff;
+  }
+
+  /* GRID */
+  .dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    flex: 1;
+    overflow: hidden;
+  }
+  .column {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    overflow: hidden;
+    border-right: 1px solid var(--border);
+  }
+  .column:last-child { border-right: none; }
+  .column-header {
+    background: var(--dark);
+    padding: 1rem 1.5rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .column-count {
+    background: var(--card-bg);
+    color: var(--teal-light);
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 11px;
+    border: 1px solid var(--border);
+  }
+  .cards-container {
+    padding: 1.5rem;
+    overflow-y: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* ORDER CARD */
+  .order-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    animation: slideIn 0.35s ease;
+  }
+  .order-card.Pending { border-left: 4px solid var(--gold); }
+  .order-card.Preparing { border-left: 4px solid var(--teal-light); }
+  .order-card.Served { border-left: 4px solid var(--green); opacity: 0.65; }
+  
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .order-card-header {
+    padding: 0.85rem 1.25rem;
+    background: rgba(0,0,0,0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+  }
+  .order-table {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--teal-light);
+  }
+  .order-time {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+  }
+  .order-body {
+    padding: 1.25rem;
+  }
+  .order-items {
+    list-style: none;
+    margin-bottom: 1rem;
+  }
+  .order-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 14px;
+  }
+  .order-item-qty {
+    color: var(--gold);
+    font-weight: 700;
+    margin-right: 0.5rem;
+  }
+  .order-notes {
+    background: rgba(217, 119, 6, 0.1);
+    border-left: 2px solid var(--gold);
+    padding: 0.5rem 0.75rem;
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+    border-radius: 0 4px 4px 0;
+  }
+  .order-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.25rem;
+    background: rgba(0,0,0,0.1);
+    border-top: 1px solid var(--border);
+  }
+  .order-total {
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .order-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .action-btn {
+    border: none;
+    padding: 0.45rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    transition: background 0.2s;
+  }
+  .btn-prepare { background: var(--teal); color: white; }
+  .btn-prepare:hover { background: var(--teal-light); }
+  .btn-serve { background: var(--green); color: white; }
+  .btn-serve:hover { background: #4ade80; }
+
+  /* RESERVATION CARD */
+  .book-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    animation: slideIn 0.3s ease;
+  }
+  .book-card h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 14px;
+    color: var(--teal-light);
+  }
+  .book-card p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+  .book-meta {
+    font-size: 11px;
+    color: var(--gold);
+    font-weight: 700;
+    margin-top: 0.25rem;
+    text-transform: uppercase;
+  }
+
+  /* Empty Message */
+  .empty-msg {
+    text-align: center;
+    color: rgba(255,255,255,0.3);
+    padding: 3rem;
+    font-size: 14px;
+  }
+</style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>👨🍳 Nandhu's <span>Kitchen Display System</span></h1>
+    <div class="header-meta">
+      <div class="clock" id="clock">12:00:00 PM</div>
+      <button class="btn-reset" onclick="clearAllOrders()">Reset Orders</button>
+    </div>
+  </div>
+
+  <!-- DASHBOARD GRID -->
+  <div class="dashboard-grid">
+    
+    <!-- LEFT: ORDERS COLUMN -->
+    <div class="column">
+      <div class="column-header">
+        <span>Active Orders</span>
+        <span class="column-count" id="activeOrdersCount">0 Active</span>
+      </div>
+      <div class="cards-container" id="ordersContainer">
+        <div class="empty-msg">No active orders from tables.</div>
+      </div>
+    </div>
+
+    <!-- RIGHT: BOOKINGS COLUMN -->
+    <div class="column">
+      <div class="column-header">
+        <span>Today's Bookings</span>
+        <span class="column-count" id="bookingsCount">0 Reservations</span>
+      </div>
+      <div class="cards-container" id="bookingsContainer">
+        <div class="empty-msg">No table bookings recorded yet.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const API_BASE = window.location.origin;
+    let orderCountCache = -1;
+
+    // Beep sound on new order
+    function playNewOrderSound() {
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        
+        // High ding ding sound
+        setTimeout(() => playNote(587.33, 0.15), 0);   // D5
+        setTimeout(() => playNote(880.00, 0.3), 150);   // A5
+        
+        function playNote(freq, duration) {
+          const osc = audioCtx.createOscillator();
+          const gainNode = audioCtx.createGain();
+          
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+          
+          gainNode.gain.setValueAtTime(0.15, audioCtx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + duration);
+          
+          osc.connect(gainNode);
+          gainNode.connect(audioCtx.destination);
+          
+          osc.start();
+          osc.stop(audioCtx.currentTime + duration);
+        }
+      } catch(e) {
+        console.warn('Audio play failed:', e);
+      }
+    }
+
+    // CLOCK
+    setInterval(() => {
+      document.getElementById('clock').textContent = new Date().toLocaleTimeString();
+    }, 1000);
+
+    // FETCH ORDERS & BOOKINGS
+    async function refreshDisplay() {
+      try {
+        const [ordersRes, bookingsRes] = await Promise.all([
+          fetch(`${API_BASE}/api/orders`),
+          fetch(`${API_BASE}/api/bookings`)
+        ]);
+        
+        const ordersData = await ordersRes.json();
+        const bookingsData = await bookingsRes.json();
+        
+        if (ordersData.success) {
+          updateOrdersUI(ordersData.orders);
+        }
+        if (bookingsData.success) {
+          updateBookingsUI(bookingsData.bookings);
+        }
+      } catch(err) {
+        console.error('KDS refresh error:', err);
+      }
+    }
+
+    // UPDATE ORDERS UI
+    function updateOrdersUI(orders) {
+      const container = document.getElementById('ordersContainer');
+      const activeCountEl = document.getElementById('activeOrdersCount');
+      
+      // Filter out 'Served' orders or show them at the bottom
+      const activeOrders = orders.filter(o => o.status !== 'Served');
+      activeCountEl.textContent = `${activeOrders.length} Active`;
+
+      // Check if order count increased to play notification sound
+      if (orderCountCache !== -1 && orders.length > orderCountCache) {
+        playNewOrderSound();
+      }
+      orderCountCache = orders.length;
+
+      if (orders.length === 0) {
+        container.innerHTML = `<div class="empty-msg">No active orders from tables.</div>`;
+        return;
+      }
+
+      // Sort: Pending first, then Preparing, then Served
+      const sorted = [...orders].sort((a, b) => {
+        const statusWeight = { 'Pending': 1, 'Preparing': 2, 'Served': 3 };
+        return statusWeight[a.status] - statusWeight[b.status] || b.id - a.id;
+      });
+
+      container.innerHTML = sorted.map(o => {
+        const timeAgo = Math.round((Date.now() - o.id) / 60000);
+        const timeStr = timeAgo <= 0 ? 'Just now' : `${timeAgo}m ago`;
+        
+        let actionsHTML = '';
+        if (o.status === 'Pending') {
+          actionsHTML = `<button class="action-btn btn-prepare" onclick="updateStatus(${o.id}, 'Preparing')">👩🍳 Start Preparing</button>`;
+        } else if (o.status === 'Preparing') {
+          actionsHTML = `<button class="action-btn btn-serve" onclick="updateStatus(${o.id}, 'Served')">🟢 Serve Food</button>`;
+        } else {
+          actionsHTML = `<span style="font-size:12px;color:var(--green);font-weight:bold;">✓ Complete</span>`;
+        }
+
+        return `
+          <div class="order-card ${o.status}">
+            <div class="order-card-header">
+              <span class="order-table">${o.table} · ${o.name}</span>
+              <span class="order-time">${timeStr}</span>
+            </div>
+            <div class="order-body">
+              <ul class="order-items">
+                ${o.items.map(item => `
+                  <li class="order-item">
+                    <span><span class="order-item-qty">${item.qty}x</span> ${item.name}</span>
+                    <span>₹${item.price * item.qty}</span>
+                  </li>
+                `).join('')}
+              </ul>
+              ${o.notes ? `<div class="order-notes"><strong>Note:</strong> ${o.notes}</div>` : ''}
+            </div>
+            <div class="order-footer">
+              <span class="order-total">Total: ₹${o.total}</span>
+              <div class="order-actions">
+                ${actionsHTML}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // UPDATE BOOKINGS UI
+    function updateBookingsUI(bookings) {
+      const container = document.getElementById('bookingsContainer');
+      const countEl = document.getElementById('bookingsCount');
+      
+      countEl.textContent = `${bookings.length} Reservations`;
+
+      if (bookings.length === 0) {
+        container.innerHTML = `<div class="empty-msg">No table bookings recorded yet.</div>`;
+        return;
+      }
+
+      container.innerHTML = [...bookings].reverse().map(b => `
+        <div class="book-card">
+          <h4>👤 ${b.name}</h4>
+          <p>📞 Phone: ${b.phone}</p>
+          <p>📅 Schedule: ${b.date} at ${b.time}</p>
+          <div class="book-meta">🏷️ ${b.guests} · ${b.seating}</div>
+        </div>
+      `).join('');
+    }
+
+    // UPDATE STATUS ON BACKEND
+    async function updateStatus(orderId, nextStatus) {
+      try {
+        const res = await fetch(`${API_BASE}/api/order/status`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id: orderId, status: nextStatus })
+        });
+        const data = await res.json();
+        if (data.success) {
+          refreshDisplay();
+        }
+      } catch(e) {
+        console.error('Status update failed:', e);
+      }
+    }
+
+    // CLEAR ALL ORDERS
+    async function clearAllOrders() {
+      if (!confirm('Are you sure you want to reset all kitchen orders?')) return;
+      try {
+        const res = await fetch(`${API_BASE}/api/orders/clear`, { method: 'POST' });
+        if ((await res.json()).success) {
+          orderCountCache = 0;
+          refreshDisplay();
+        }
+      } catch(e) {
+        console.error('Reset failed:', e);
+      }
+    }
+
+    // Initial load and periodic polling every 4 seconds
+    refreshDisplay();
+    setInterval(refreshDisplay, 4000);
+  </script>
+</body>
+</html>

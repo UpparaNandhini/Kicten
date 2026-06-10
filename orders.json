@@ -1,0 +1,25 @@
+[
+  {
+    "id": 1780901820629,
+    "name": "varshini",
+    "table": "Table 5",
+    "items": [
+      {
+        "id": "chicken-tikka",
+        "name": "Chicken Tikka",
+        "price": 340,
+        "qty": 1
+      },
+      {
+        "id": "mutton-seekh",
+        "name": "Mutton Seekh",
+        "price": 420,
+        "qty": 1
+      }
+    ],
+    "total": 760,
+    "notes": "",
+    "status": "Pending",
+    "orderedAt": "2026-06-08T06:57:00.629Z"
+  }
+]
