@@ -1,0 +1,888 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spice Garden - Customer Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #E06000;
+      --cream: #120704;
+      --dark: #FDF5E6;
+      --gold: #D97706;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --card-bg: rgba(30, 15, 10, 0.7);
+      --border-color: rgba(224, 96, 0, 0.15);
+      --glass-bg: rgba(28, 13, 8, 0.85);
+      --glass-border: rgba(224, 96, 0, 0.15);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #120704 0%, #1c0d08 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E06000' fill-opacity='0.02'%3E%3Cpath d='M30 0L60 30L30 60L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(14, 6, 4, 0.9);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .logo span {
+      color: var(--saffron);
+    }
+
+    .nav-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .nav-btn {
+      background: transparent;
+      color: var(--dark);
+      border: 1px solid var(--border-color);
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .nav-btn:hover {
+      border-color: var(--saffron);
+      color: var(--saffron);
+      box-shadow: 0 0 15px rgba(224, 96, 0, 0.2);
+    }
+
+    /* LOGIN CONTAINER */
+    .login-container {
+      max-width: 450px;
+      width: 90%;
+      margin: auto;
+      padding: 2.5rem;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .login-container h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem;
+      color: #fff;
+    }
+
+    .login-container p {
+      color: #bfa197;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      text-align: left;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      color: #8c7269;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group input {
+      padding: 0.75rem 1rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+    }
+
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--saffron);
+    }
+
+    .btn-login {
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn-login:hover {
+      background: #cf5608;
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1200px;
+      width: 90%;
+      margin: 3rem auto;
+      flex: 1;
+      z-index: 1;
+      display: none; /* Shown dynamically when logged in */
+    }
+
+    .welcome-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .welcome-card::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, var(--saffron), var(--gold), var(--saffron));
+    }
+
+    .welcome-info h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.8rem, 3.5vw, 2.5rem);
+      color: #fff;
+      margin-bottom: 0.35rem;
+    }
+
+    .welcome-info p {
+      color: #bfa197;
+      font-size: 15px;
+    }
+
+    /* TABS */
+    .tabs-bar {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      border-bottom: 1px solid rgba(224, 96, 0, 0.2);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #bfa197;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 6px;
+    }
+
+    .tab-btn.active {
+      color: var(--saffron);
+      background: rgba(224, 96, 0, 0.08);
+      box-shadow: 0 0 10px rgba(224, 96, 0, 0.1);
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* GRID FOR PORTAL */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+
+    @media (min-width: 900px) {
+      .dashboard-grid {
+        grid-template-columns: 1.5fr 1fr;
+      }
+    }
+
+    /* CARDS */
+    .card {
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+      height: fit-content;
+      margin-bottom: 2rem;
+    }
+
+    .card h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      margin-bottom: 1.5rem;
+      color: var(--saffron);
+      border-bottom: 1px solid rgba(224, 96, 0, 0.2);
+      padding-bottom: 0.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    /* SCANNERS LIST */
+    .scanners-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 2rem;
+    }
+
+    .scanner-item {
+      background: rgba(28, 13, 8, 0.5);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .scanner-item:hover {
+      transform: translateY(-5px);
+      border-color: var(--saffron);
+      box-shadow: 0 10px 20px rgba(224, 96, 0, 0.15);
+    }
+
+    .scanner-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .qr-container {
+      background: #fff;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 1rem;
+      display: inline-block;
+    }
+
+    .qr-container img {
+      display: block;
+      width: 140px;
+      height: 140px;
+    }
+
+    .scanner-desc {
+      font-size: 13px;
+      color: #bfa197;
+      line-height: 1.5;
+      margin-bottom: 1rem;
+    }
+
+    .action-link {
+      background: var(--saffron);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      transition: background 0.2s;
+      width: 100%;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .action-link:hover {
+      background: #cf5608;
+    }
+
+    /* INFO LIST */
+    .info-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .info-group {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+    }
+
+    .info-icon {
+      font-size: 1.5rem;
+      color: var(--gold);
+      background: rgba(217, 119, 6, 0.1);
+      padding: 0.5rem;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 40px;
+    }
+
+    .info-text h3 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+
+    .info-text p {
+      font-size: 14px;
+      color: #bfa197;
+      line-height: 1.5;
+    }
+
+    .config-box {
+      margin-top: 2rem;
+      background: rgba(220, 38, 38, 0.05);
+      border: 1px solid rgba(217, 119, 6, 0.2);
+      border-radius: 8px;
+      padding: 1rem;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--gold);
+    }
+
+    .config-box code {
+      background: rgba(0,0,0,0.3);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fff;
+    }
+
+    /* BOOKINGS & ORDERS ITEMS */
+    .records-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .record-card {
+      background: rgba(28, 13, 8, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      transition: border-color 0.3s;
+    }
+
+    .record-card:hover {
+      border-color: var(--saffron);
+    }
+
+    .record-details h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      color: #fff;
+      margin-bottom: 0.5rem;
+    }
+
+    .record-details p {
+      font-size: 14px;
+      color: #bfa197;
+      line-height: 1.5;
+      margin-bottom: 0.25rem;
+    }
+
+    .status-badge {
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    .status-badge.pending { background: rgba(217, 119, 6, 0.15); color: var(--gold); }
+    .status-badge.completed { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+
+    .btn-cancel {
+      background: transparent;
+      color: var(--danger);
+      border: 1px solid var(--danger);
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cancel:hover {
+      background: var(--danger);
+      color: #fff;
+    }
+
+    /* EMPTY STATES */
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #8c7269;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: rgba(14, 6, 4, 0.95);
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      font-size: 13px;
+      color: #7c5d53;
+    }
+
+    footer span {
+      color: var(--saffron);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Spice <span>Garden</span></div>
+    <div class="nav-actions">
+      <a href="/" class="nav-btn">← Home & Menu</a>
+      <button class="nav-btn" id="logout-btn" style="display: none;" onclick="logout()">Log Out</button>
+    </div>
+  </header>
+
+  <!-- LOGIN PANEL -->
+  <div class="login-container" id="login-panel">
+    <div>
+      <h1>Customer Portal</h1>
+      <p>Log in using your registered phone number to view your reservation details and track live kitchen orders.</p>
+    </div>
+    <form onsubmit="handleLogin(event)">
+      <div class="form-group" style="margin-bottom: 1rem;">
+        <label for="login-name">Your Name (Optional)</label>
+        <input type="text" id="login-name" placeholder="e.g. John Doe">
+      </div>
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label for="login-phone">Phone Number *</label>
+        <input type="tel" id="login-phone" required placeholder="e.g. 9876543210">
+      </div>
+      <button type="submit" class="btn-login" style="width: 100%;">Access My Dashboard</button>
+    </form>
+  </div>
+
+  <!-- DASHBOARD CONTAINER -->
+  <div class="container" id="dashboard-container">
+    <div class="welcome-card">
+      <div class="welcome-info">
+        <h1 id="welcome-text">Welcome, Guest!</h1>
+        <p id="welcome-phone">Registered phone: -</p>
+      </div>
+      <button class="nav-btn" onclick="logout()">Exit Account</button>
+    </div>
+
+    <!-- TABS BAR -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('tab-info', this)">📌 Info & Scanners</button>
+      <button class="tab-btn" onclick="switchTab('tab-bookings', this)">📅 My Bookings (<span id="count-bookings">0</span>)</button>
+      <button class="tab-btn" onclick="switchTab('tab-orders', this)">🍔 My Orders (<span id="count-orders">0</span>)</button>
+    </div>
+
+    <!-- TAB 1: INFO & SCANNERS -->
+    <div class="tab-content active" id="tab-info">
+      <div class="dashboard-grid">
+        <div class="card">
+          <h2>📱 Dining Scanners & QR Codes</h2>
+          <div class="scanners-list">
+            <div class="scanner-item">
+              <div class="scanner-title">Full Menu Card</div>
+              <div class="qr-container" id="menu-qr"></div>
+              <p class="scanner-desc">Scan to view complete menus, chef details, and order directly on your phone.</p>
+              <a href="physical_menu_card.html" target="_blank" class="action-link">Open Menu Directly</a>
+            </div>
+
+            <div class="scanner-item">
+              <div class="scanner-title">Reserve a Table</div>
+              <div class="qr-container" id="book-qr"></div>
+              <p class="scanner-desc">Scan to book a table immediately and choose your preferred dining zone.</p>
+              <a href="/#book" class="action-link">Reserve Table Online</a>
+            </div>
+          </div>
+          <div class="config-box">
+            <span>🔗 Connection URL:</span>
+            <code id="server-url">Detecting...</code>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📌 Restaurant Details</h2>
+          <div class="info-list">
+            <div class="info-group">
+              <div class="info-icon">📍</div>
+              <div class="info-text">
+                <h3>Our Address</h3>
+                <p>42, MG Road, Indiranagar, Bengaluru · 560008</p>
+              </div>
+            </div>
+            <div class="info-group">
+              <div class="info-icon">🕒</div>
+              <div class="info-text">
+                <h3>Hours of Operation</h3>
+                <p>Lunch: 12:00 PM – 3:30 PM<br>Dinner: 7:00 PM – 11:30 PM</p>
+              </div>
+            </div>
+            <div class="info-group">
+              <div class="info-icon">📶</div>
+              <div class="info-text">
+                <h3>Guest Wi-Fi</h3>
+                <p>SSID: <strong>SpiceGarden_Guest</strong><br>Pass: <strong>SaffronSpices98</strong></p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: MY BOOKINGS -->
+    <div class="tab-content" id="tab-bookings">
+      <div class="card" style="width: 100%;">
+        <h2>📅 Your Table Reservations</h2>
+        <div class="records-list" id="bookings-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MY ORDERS -->
+    <div class="tab-content" id="tab-orders">
+      <div class="card" style="width: 100%;">
+        <h2>🍔 Your Food Orders</h2>
+        <div class="records-list" id="orders-list">
+          <!-- Populated dynamically -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 <span>Spice Garden</span> · All rights reserved</p>
+  </footer>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <script>
+    let activePhone = '';
+    let activeName = '';
+    let serverBaseUrl = window.location.origin;
+
+    // PAGE LOAD
+    window.addEventListener('DOMContentLoaded', async () => {
+      await fetchConfig();
+      checkSession();
+    });
+
+    async function fetchConfig() {
+      try {
+        const configResp = await fetch('/api/config');
+        const config = await configResp.json();
+        if (config && config.baseUrl) {
+          serverBaseUrl = config.baseUrl;
+        }
+      } catch (e) {
+        console.warn("Could not fetch server config, using default base location.");
+      }
+      document.getElementById('server-url').textContent = serverBaseUrl;
+    }
+
+    function checkSession() {
+      const storedPhone = localStorage.getItem('customerPhone');
+      const storedName = localStorage.getItem('customerName');
+
+      if (storedPhone) {
+        activePhone = storedPhone;
+        activeName = storedName || 'Guest';
+        showDashboard();
+      } else {
+        showLogin();
+      }
+    }
+
+    function handleLogin(e) {
+      e.preventDefault();
+      const phoneInput = document.getElementById('login-phone').value.trim();
+      const nameInput = document.getElementById('login-name').value.trim();
+
+      if (!phoneInput) return;
+
+      localStorage.setItem('customerPhone', phoneInput);
+      localStorage.setItem('customerName', nameInput || 'Guest');
+      
+      activePhone = phoneInput;
+      activeName = nameInput || 'Guest';
+
+      showDashboard();
+    }
+
+    function logout() {
+      localStorage.removeItem('customerPhone');
+      localStorage.removeItem('customerName');
+      activePhone = '';
+      activeName = '';
+      showLogin();
+    }
+
+    function showLogin() {
+      document.getElementById('login-panel').style.display = 'flex';
+      document.getElementById('dashboard-container').style.display = 'none';
+      document.getElementById('logout-btn').style.display = 'none';
+    }
+
+    function showDashboard() {
+      document.getElementById('login-panel').style.display = 'none';
+      document.getElementById('dashboard-container').style.display = 'block';
+      document.getElementById('logout-btn').style.display = 'inline-flex';
+
+      document.getElementById('welcome-text').textContent = `Welcome back, ${activeName}!`;
+      document.getElementById('welcome-phone').textContent = `Registered phone: ${activePhone}`;
+
+      // Load specific data
+      loadCustomerData();
+
+      // Render QRs
+      makeQR('menu-qr', serverBaseUrl + '/physical_menu_card.html');
+      makeQR('book-qr', serverBaseUrl + '/#book');
+    }
+
+    async function loadCustomerData() {
+      if (!activePhone) return;
+
+      try {
+        // Bookings
+        const bookingsRes = await fetch(`/api/customer/bookings?phone=${encodeURIComponent(activePhone)}`);
+        const bookingsData = await bookingsRes.json();
+        const bookings = bookingsData.bookings || [];
+        renderBookings(bookings);
+        document.getElementById('count-bookings').textContent = bookings.length;
+
+        // Orders
+        const ordersRes = await fetch(`/api/customer/orders?phone=${encodeURIComponent(activePhone)}`);
+        const ordersData = await ordersRes.json();
+        const orders = ordersData.orders || [];
+        renderOrders(orders);
+        document.getElementById('count-orders').textContent = orders.length;
+
+      } catch (err) {
+        console.error("Error fetching customer data:", err);
+      }
+    }
+
+    function renderBookings(bookings) {
+      const container = document.getElementById('bookings-list');
+      if (bookings.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📅</div>
+            <p>No table reservations found under this phone number.</p>
+            <p style="font-size: 12px; margin-top: 5px;">Book a table from the main site to view it here.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = bookings.map(b => {
+        return `
+          <div class="record-card">
+            <div class="record-details">
+              <h3>Table Booking #${b.id.toString().slice(-6)}</h3>
+              <p>📅 <strong>Date:</strong> ${b.date} &nbsp;|&nbsp; 🕒 <strong>Time:</strong> ${b.time}</p>
+              <p>👥 <strong>Guests:</strong> ${escapeHtml(b.guests)} &nbsp;|&nbsp; 🪑 <strong>Preference:</strong> ${escapeHtml(b.seating)}</p>
+              <p style="font-size: 13px;">📝 <strong>Special Request:</strong> ${escapeHtml(b.notes || 'None')}</p>
+            </div>
+            <div>
+              <button class="btn-cancel" onclick="cancelBooking(${b.id})">Cancel Booking</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderOrders(orders) {
+      const container = document.getElementById('orders-list');
+      if (orders.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">🍔</div>
+            <p>No dining orders found under this phone number.</p>
+            <p style="font-size: 12px; margin-top: 5px;">Place an order from your table to track its status.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = orders.map(o => {
+        const timeStr = new Date(o.orderedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const itemsList = o.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+        const statusClass = o.status.toLowerCase() === 'pending' ? 'pending' : 'completed';
+
+        return `
+          <div class="record-card">
+            <div class="record-details">
+              <h3>Order #${o.id.toString().slice(-6)}</h3>
+              <p>📍 <strong>Table Location:</strong> ${escapeHtml(o.table)} &nbsp;|&nbsp; 🕒 <strong>Ordered At:</strong> ${timeStr}</p>
+              <p style="font-size: 13px; color: #fff;">🍛 <strong>Items:</strong> ${escapeHtml(itemsList)}</p>
+              <p style="font-size: 15px; font-weight: 600; color: var(--saffron);">Total Amount: ₹${o.total}</p>
+            </div>
+            <div>
+              <span class="status-badge ${statusClass}">${o.status}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    async function cancelBooking(id) {
+      if (!confirm("Are you sure you want to cancel this booking reservation?")) return;
+      try {
+        const res = await fetch('/api/booking/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Your booking has been cancelled successfully.");
+          loadCustomerData();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        alert("Failed to cancel booking. Make sure the server is running.");
+      }
+    }
+
+    // UTILS
+    function switchTab(tabId, btn) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      // Remove active button class
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+      // Show target content
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    function makeQR(containerId, url) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+      container.innerHTML = ''; // Clear
+
+      try {
+        if (typeof QRCode !== 'undefined') {
+          new QRCode(container, {
+            text: url,
+            width: 140,
+            height: 140,
+            colorDark:  '#1c0d08',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+          });
+        } else {
+          container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(url)}" alt="QR Code" style="width:140px;height:140px;display:block;" />`;
+        }
+      } catch (e) {
+        container.innerHTML = `<img src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=${encodeURIComponent(url)}" alt="QR Code" style="width:140px;height:140px;display:block;" />`;
+      }
+    }
+
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+  </script>
+</body>
+</html>

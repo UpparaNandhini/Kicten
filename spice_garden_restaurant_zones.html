@@ -180,6 +180,169 @@
     #qr-reader{max-height:400px}
     .dish-detail-img{height:200px}
   }
+
+  /* CART STYLING */
+  .floating-cart-btn {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    background: var(--saffron);
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    z-index: 900;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .floating-cart-btn:hover {
+    transform: scale(1.05);
+    background: #cf5608;
+  }
+  .cart-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: #fff;
+    color: var(--saffron);
+    font-size: 11px;
+    font-weight: bold;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+  }
+  .cart-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    width: 100%;
+    max-width: 500px;
+    padding: 2rem;
+    max-height: 90vh;
+    overflow-y: auto;
+    color: var(--dark);
+  }
+  .cart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.75rem;
+  }
+  .cart-header h2 {
+    color: var(--saffron);
+    font-size: 1.5rem;
+  }
+  .cart-items-list {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .cart-item-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #1c0d08;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    border: 1px solid var(--border-color);
+  }
+  .cart-item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+  .cart-item-name {
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--dark);
+  }
+  .cart-item-price {
+    font-size: 13px;
+    color: var(--saffron);
+  }
+  .cart-item-qty-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--dark);
+  }
+  .qty-btn {
+    background: var(--border-color);
+    border: none;
+    color: #fff;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .qty-btn:hover {
+    background: var(--saffron);
+  }
+  .cart-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+  }
+  .cart-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  .cart-form-group.full {
+    grid-column: 1 / -1;
+  }
+  .cart-form-group label {
+    font-size: 11px;
+    color: #888;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .cart-form-group input, .cart-form-group textarea {
+    padding: 0.5rem 0.75rem;
+    background: #1c0d08;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--dark);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+  }
+  .cart-form-group input:focus, .cart-form-group textarea:focus {
+    outline: none;
+    border-color: var(--saffron);
+  }
+  .cart-total-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .cart-total-price {
+    color: var(--saffron);
+  }
 </style>
 </head>
 <body>
@@ -432,6 +595,50 @@
   </div>
 </div>
 
+<!-- FLOATING CART BUTTON -->
+<button class="floating-cart-btn" id="floatingCartBtn" onclick="openCartModal()">
+  🛒 <span class="cart-badge" id="cartBadge">0</span>
+</button>
+
+<!-- CART MODAL -->
+<div class="dish-modal" id="cartModal">
+  <div class="cart-content">
+    <div class="cart-header">
+      <h2>Your Cart</h2>
+      <button class="qty-btn" onclick="closeCartModal()">✕</button>
+    </div>
+    
+    <div class="cart-items-list" id="cartItemsList">
+      <!-- Items dynamically populated -->
+    </div>
+    
+    <div class="cart-form">
+      <div class="cart-form-group">
+        <label>Your Name</label>
+        <input type="text" id="cartCustName" placeholder="Enter name">
+      </div>
+      <div class="cart-form-group">
+        <label>Table Number *</label>
+        <input type="text" id="cartTableNum" placeholder="e.g. Table 5">
+      </div>
+      <div class="cart-form-group full">
+        <label>Special Instructions</label>
+        <textarea id="cartNotes" rows="2" placeholder="e.g. Extra spice, no onions"></textarea>
+      </div>
+    </div>
+    
+    <div class="cart-total-section">
+      <span>Total Amount:</span>
+      <span class="cart-total-price" id="cartTotal">₹0</span>
+    </div>
+    
+    <div style="display: flex; gap: 1rem;">
+      <button class="detail-close" style="flex: 1;" onclick="closeCartModal()">Cancel</button>
+      <button class="detail-add" id="placeOrderBtn" style="flex: 1; margin-left: 0;" onclick="placeOrder()">Place Order</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
 const dishes = [
@@ -478,7 +685,7 @@ function renderMenu(filter) {
         <p>${d.desc}</p>
         <div class="card-footer">
           <span class="price">₹${d.price}</span>
-          <button class="add-btn" onclick="addCart(event, '${d.name}')">+ Add</button>
+          <button class="add-btn" onclick="addCart(event, '${d.id}')">+ Add</button>
         </div>
       </div>
     </div>
@@ -492,12 +699,147 @@ function filterMenu(f, btn) {
   renderMenu(f);
 }
 
-function addCart(event, name) {
-  event.stopPropagation();
-  const btn = event.target;
-  btn.textContent = '✓ Added';
-  btn.style.background = '#2D6A3F';
-  setTimeout(() => { btn.textContent = '+ Add'; btn.style.background = ''; }, 1500);
+let cart = [];
+
+function addCart(event, dishId) {
+  if (event) event.stopPropagation();
+  const dish = dishes.find(d => d.id === dishId);
+  if (!dish) return;
+  
+  const existing = cart.find(item => item.id === dishId);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({
+      id: dish.id,
+      name: dish.name,
+      price: dish.price,
+      qty: 1
+    });
+  }
+  
+  updateCartBadge();
+  
+  if (event) {
+    const btn = event.target;
+    const originalText = btn.textContent;
+    btn.textContent = '✓ Added';
+    btn.style.background = '#2D6A3F';
+    setTimeout(() => { btn.textContent = originalText; btn.style.background = ''; }, 1000);
+  }
+}
+
+function updateCartBadge() {
+  const totalItems = cart.reduce((sum, item) => sum + item.qty, 0);
+  const badge = document.getElementById('cartBadge');
+  const btn = document.getElementById('floatingCartBtn');
+  
+  if (totalItems > 0) {
+    badge.textContent = totalItems;
+    btn.style.display = 'flex';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+function openCartModal() {
+  renderCartItems();
+  document.getElementById('cartModal').classList.add('active');
+}
+
+function closeCartModal() {
+  document.getElementById('cartModal').classList.remove('active');
+}
+
+function adjustQty(dishId, change) {
+  const item = cart.find(i => i.id === dishId);
+  if (!item) return;
+  
+  item.qty += change;
+  if (item.qty <= 0) {
+    cart = cart.filter(i => i.id !== dishId);
+  }
+  
+  updateCartBadge();
+  renderCartItems();
+}
+
+function renderCartItems() {
+  const listEl = document.getElementById('cartItemsList');
+  if (cart.length === 0) {
+    listEl.innerHTML = '<div style="text-align:center;color:#888;padding:2rem;">Your cart is empty.</div>';
+    document.getElementById('cartTotal').textContent = '₹0';
+    document.getElementById('placeOrderBtn').disabled = true;
+    return;
+  }
+  
+  document.getElementById('placeOrderBtn').disabled = false;
+  let total = 0;
+  
+  listEl.innerHTML = cart.map(item => {
+    total += item.price * item.qty;
+    return `
+      <div class="cart-item-row">
+        <div class="cart-item-info">
+          <div class="cart-item-name">${item.name}</div>
+          <div class="cart-item-price">₹${item.price} each</div>
+        </div>
+        <div class="cart-item-qty-controls">
+          <button class="qty-btn" onclick="adjustQty('${item.id}', -1)">-</button>
+          <span>${item.qty}</span>
+          <button class="qty-btn" onclick="adjustQty('${item.id}', 1)">+</button>
+          <span style="font-weight:600;margin-left:0.5rem">₹${item.price * item.qty}</span>
+        </div>
+      </div>
+    `;
+  }).join('');
+  
+  document.getElementById('cartTotal').textContent = '₹' + total;
+}
+
+async function placeOrder() {
+  const name = document.getElementById('cartCustName').value.trim();
+  const table = document.getElementById('cartTableNum').value.trim();
+  const notes = document.getElementById('cartNotes').value.trim();
+  
+  if (!table) {
+    alert('Please enter your Table Number.');
+    return;
+  }
+  
+  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+  const orderData = {
+    name: name || 'Guest',
+    table: table,
+    items: cart.map(i => ({ name: i.name, qty: i.qty, price: i.price })),
+    total: total,
+    notes: notes
+  };
+  
+  try {
+    const response = await fetch('/api/order', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(orderData)
+    });
+    const result = await response.json();
+    if (result.success) {
+      alert('Order placed successfully! The kitchen is preparing your food.');
+      cart = [];
+      updateCartBadge();
+      closeCartModal();
+    } else {
+      alert('Error placing order: ' + result.message);
+    }
+  } catch (err) {
+    alert('Error placing order. Please make sure the server is online.');
+  }
+}
+
+function addToCart(dishId) {
+  addCart(null, dishId);
+  alert('Item added to cart!');
+  closeDishDetail();
 }
 
 function showDishDetail(dishId) {
@@ -520,7 +862,7 @@ function showDishDetail(dishId) {
       <div class="dish-detail-footer">
         <div class="detail-price">₹${dish.price}</div>
         <button class="detail-close" onclick="closeDishDetail()">Close</button>
-        <button class="detail-add" onclick="addToCart('${dish.name}')">+ Add to Cart</button>
+        <button class="detail-add" onclick="addToCart('${dish.id}')">+ Add to Cart</button>
       </div>
     </div>
   `;
@@ -542,7 +884,7 @@ function scrollToId(id) {
   document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
 }
 
-function bookTable() {
+async function bookTable() {
   const name = document.getElementById('fname').value.trim();
   const phone = document.getElementById('phone').value.trim();
   const date = document.getElementById('bdate').value;
@@ -553,11 +895,31 @@ function bookTable() {
   }
   const guests = document.getElementById('guests').value;
   const seating = document.getElementById('seating').value;
-  document.getElementById('confirmText').textContent =
-    `Booking confirmed for ${name} · ${guests} · ${seating} · ${date} at ${time}`;
-  const msg = document.getElementById('successMsg');
-  msg.style.display = 'block';
-  msg.scrollIntoView({ behavior: 'smooth' });
+  
+  try {
+    const response = await fetch('/api/book', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, phone, date, time, guests, seating })
+    });
+    const result = await response.json();
+    if (result.success) {
+      document.getElementById('confirmText').textContent =
+        `Booking confirmed for ${name} · ${guests} · ${seating} · ${date} at ${time}`;
+      const msg = document.getElementById('successMsg');
+      msg.style.display = 'block';
+      msg.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      alert('Error confirming booking: ' + result.message);
+    }
+  } catch (err) {
+    // Fallback message for offline / static hosting mode
+    document.getElementById('confirmText').textContent =
+      `Booking confirmed (Offline) for ${name} · ${guests} · ${seating} · ${date} at ${time}`;
+    const msg = document.getElementById('successMsg');
+    msg.style.display = 'block';
+    msg.scrollIntoView({ behavior: 'smooth' });
+  }
 }
 
 // Set min date to today

@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "name": "Nandhini Uppara",
+    "role": "Head Chef & Owner",
+    "contact": "+91 98765 43210",
+    "shift": "All Day",
+    "status": "Active"
+  },
+  {
+    "id": 2,
+    "name": "Rajesh Kumar",
+    "role": "Sous Chef",
+    "contact": "+91 98765 43211",
+    "shift": "Morning",
+    "status": "Active"
+  },
+  {
+    "id": 3,
+    "name": "Priya Sharma",
+    "role": "Pastry Chef",
+    "contact": "+91 98765 43212",
+    "shift": "Morning",
+    "status": "Active"
+  },
+  {
+    "id": 4,
+    "name": "Vikram Singh",
+    "role": "Front of House Manager",
+    "contact": "+91 98765 43213",
+    "shift": "Evening",
+    "status": "Active"
+  },
+  {
+    "id": 5,
+    "name": "Amit Patel",
+    "role": "Senior Server",
+    "contact": "+91 98765 43214",
+    "shift": "Evening",
+    "status": "On Leave"
+  }
+]

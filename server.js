@@ -9,7 +9,14 @@ const PORT    = 3000;
 const HOST    = '0.0.0.0';   // listen on ALL interfaces (LAN + localhost)
 const DATA_FILE   = path.join(__dirname, 'bookings.json');
 const ORDERS_FILE = path.join(__dirname, 'orders.json');
+const STAFF_FILE  = path.join(__dirname, 'staff.json');
 const PUBLIC      = __dirname;
+
+function cleanPhone(p) {
+  if (!p) return '';
+  const digits = p.replace(/\D/g, '');
+  return digits.slice(-10);
+}
 
 // ── Auto-detect LAN IP ───────────────────────────────────────
 function getLanIP() {
@@ -28,6 +35,7 @@ const LAN_IP = getLanIP();
 // Ensure data files exist
 if (!fs.existsSync(DATA_FILE))   fs.writeFileSync(DATA_FILE, '[]', 'utf8');
 if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, '[]', 'utf8');
+if (!fs.existsSync(STAFF_FILE))  fs.writeFileSync(STAFF_FILE, '[]', 'utf8');
 
 // MIME types
 const MIME = {
@@ -127,10 +135,91 @@ const server = http.createServer(async (req, res) => {
     }
   }
 
+  // ── POST /api/booking/delete — delete a booking ───────────────
+  if (req.method === 'POST' && pathname === '/api/booking/delete') {
+    const data = await readBody(req);
+    const { id } = data;
+    if (!id) {
+      return sendJSON(res, 400, { success: false, message: 'Missing booking id.' });
+    }
+    try {
+      const existing = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+      const filtered = existing.filter(b => b.id !== parseInt(id));
+      fs.writeFileSync(DATA_FILE, JSON.stringify(filtered, null, 2), 'utf8');
+      return sendJSON(res, 200, { success: true });
+    } catch (err) {
+      return sendJSON(res, 500, { success: false, message: 'Server error deleting booking.' });
+    }
+  }
+
+  // ── GET /api/staff — list all staff ──────────────────────────
+  if (req.method === 'GET' && pathname === '/api/staff') {
+    try {
+      const list = JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8'));
+      return sendJSON(res, 200, { success: true, count: list.length, staff: list });
+    } catch {
+      return sendJSON(res, 500, { success: false, message: 'Could not read staff.' });
+    }
+  }
+
+  // ── POST /api/staff — add/edit a staff member ─────────────────
+  if (req.method === 'POST' && pathname === '/api/staff') {
+    const data = await readBody(req);
+    const { id, name, role, contact, shift, status } = data;
+
+    if (!name || !role) {
+      return sendJSON(res, 400, { success: false, message: 'Missing required fields: name, role.' });
+    }
+
+    try {
+      const existing = JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8'));
+      if (id) {
+        // Edit existing
+        const idx = existing.findIndex(s => s.id === parseInt(id));
+        if (idx !== -1) {
+          existing[idx] = { ...existing[idx], name, role, contact, shift, status };
+        } else {
+          return sendJSON(res, 404, { success: false, message: 'Staff member not found.' });
+        }
+      } else {
+        // Add new
+        const staffMember = {
+          id: Date.now(),
+          name, role,
+          contact: contact || '',
+          shift: shift || 'Morning',
+          status: status || 'Active'
+        };
+        existing.push(staffMember);
+      }
+      fs.writeFileSync(STAFF_FILE, JSON.stringify(existing, null, 2), 'utf8');
+      return sendJSON(res, 200, { success: true });
+    } catch (err) {
+      return sendJSON(res, 500, { success: false, message: 'Server error saving staff.' });
+    }
+  }
+
+  // ── POST /api/staff/delete — delete a staff member ────────────
+  if (req.method === 'POST' && pathname === '/api/staff/delete') {
+    const data = await readBody(req);
+    const { id } = data;
+    if (!id) {
+      return sendJSON(res, 400, { success: false, message: 'Missing staff id.' });
+    }
+    try {
+      const existing = JSON.parse(fs.readFileSync(STAFF_FILE, 'utf8'));
+      const filtered = existing.filter(s => s.id !== parseInt(id));
+      fs.writeFileSync(STAFF_FILE, JSON.stringify(filtered, null, 2), 'utf8');
+      return sendJSON(res, 200, { success: true });
+    } catch (err) {
+      return sendJSON(res, 500, { success: false, message: 'Server error deleting staff.' });
+    }
+  }
+
   // ── POST /api/order — save a customer order ──────────────────
   if (req.method === 'POST' && pathname === '/api/order') {
     const data = await readBody(req);
-    const { name, table, items, total, notes } = data;
+    const { name, table, items, total, notes, phone } = data;
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return sendJSON(res, 400, { success: false, message: 'Cart is empty.' });
@@ -140,6 +229,7 @@ const server = http.createServer(async (req, res) => {
       id:        Date.now(),
       name:      name || 'Guest',
       table:     table || 'Table 5',
+      phone:     phone || '',
       items,
       total:     total || 0,
       notes:     notes || '',
@@ -156,6 +246,38 @@ const server = http.createServer(async (req, res) => {
     } catch (err) {
       console.error('Order save error:', err);
       return sendJSON(res, 500, { success: false, message: 'Server error. Try again.' });
+    }
+  }
+
+  // ── GET /api/customer/bookings — list customer bookings ────────
+  if (req.method === 'GET' && pathname === '/api/customer/bookings') {
+    const phone = parsed.query.phone;
+    if (!phone) {
+      return sendJSON(res, 400, { success: false, message: 'Phone number is required.' });
+    }
+    try {
+      const list = JSON.parse(fs.readFileSync(DATA_FILE, 'utf8'));
+      const target = cleanPhone(phone);
+      const filtered = list.filter(b => cleanPhone(b.phone) === target);
+      return sendJSON(res, 200, { success: true, bookings: filtered });
+    } catch {
+      return sendJSON(res, 500, { success: false, message: 'Could not read bookings.' });
+    }
+  }
+
+  // ── GET /api/customer/orders — list customer orders ────────────
+  if (req.method === 'GET' && pathname === '/api/customer/orders') {
+    const phone = parsed.query.phone;
+    if (!phone) {
+      return sendJSON(res, 400, { success: false, message: 'Phone number is required.' });
+    }
+    try {
+      const list = JSON.parse(fs.readFileSync(ORDERS_FILE, 'utf8'));
+      const target = cleanPhone(phone);
+      const filtered = list.filter(o => cleanPhone(o.phone) === target);
+      return sendJSON(res, 200, { success: true, orders: filtered });
+    } catch {
+      return sendJSON(res, 500, { success: false, message: 'Could not read orders.' });
     }
   }
 
@@ -207,6 +329,10 @@ const server = http.createServer(async (req, res) => {
     file = 'index.html';
   } else if (pathname === '/kitchen') {
     file = 'kitchen.html';
+  } else if (pathname === '/admin') {
+    file = 'admin.html';
+  } else if (pathname === '/customer') {
+    file = 'customer.html';
   } else if (pathname === '/book') {
     // /book route also serves main HTML (router handles it via ?mode=book)
     file = 'index.html';

@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spice Garden - Admin Dashboard</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --saffron: #E06000;
+      --cream: #120704;
+      --dark: #FDF5E6;
+      --gold: #D97706;
+      --success: #22c55e;
+      --danger: #ef4444;
+      --purple: #a855f7;
+      --card-bg: rgba(30, 15, 10, 0.75);
+      --border-color: rgba(224, 96, 0, 0.15);
+      --glass-bg: rgba(28, 13, 8, 0.88);
+      --glass-border: rgba(224, 96, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: linear-gradient(135deg, #0f0604 0%, #1c0d08 100%);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23E06000' fill-opacity='0.015'%3E%3Cpath d='M30 0L60 30L30 60L0 30z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    /* HEADER */
+    header {
+      background: rgba(14, 6, 4, 0.95);
+      backdrop-filter: blur(12px);
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid rgba(224, 96, 0, 0.25);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #fff;
+    }
+
+    .logo span {
+      color: var(--saffron);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    .btn-nav {
+      background: transparent;
+      color: var(--dark);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 0.5rem 1.25rem;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+    }
+
+    .btn-nav:hover {
+      border-color: var(--saffron);
+      color: var(--saffron);
+      box-shadow: 0 0 15px rgba(224, 96, 0, 0.2);
+    }
+
+    /* MAIN CONTAINER */
+    .container {
+      max-width: 1400px;
+      width: 92%;
+      margin: 2rem auto;
+      flex: 1;
+      z-index: 1;
+    }
+
+    /* PAGE TITLE */
+    .page-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 2rem;
+    }
+
+    .page-title-row h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2.2rem;
+      color: #fff;
+    }
+
+    /* TABS */
+    .tabs-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 2.5rem;
+      border-bottom: 1px solid rgba(224, 96, 0, 0.2);
+      padding-bottom: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    .tab-btn {
+      background: transparent;
+      border: none;
+      color: #bfa197;
+      font-size: 15px;
+      font-weight: 600;
+      padding: 0.6rem 1.2rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      border-radius: 6px;
+    }
+
+    .tab-btn.active {
+      color: var(--saffron);
+      background: rgba(224, 96, 0, 0.08);
+      box-shadow: 0 0 10px rgba(224, 96, 0, 0.1);
+    }
+
+    .tab-btn:hover {
+      color: #fff;
+    }
+
+    .tab-content {
+      display: none;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    /* STATS ROW */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2.5rem;
+    }
+
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--saffron);
+    }
+
+    .stat-card.blue::before { background-color: #3b82f6; }
+    .stat-card.green::before { background-color: var(--success); }
+    .stat-card.purple::before { background-color: var(--purple); }
+
+    .stat-title {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #8c7269;
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      font-family: 'Playfair Display', serif;
+    }
+
+    /* FLOOR MAP STYLING */
+    .floor-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .table-card {
+      background: rgba(28, 13, 8, 0.8);
+      border: 1px solid var(--border-color);
+      border-radius: 14px;
+      padding: 1.5rem;
+      box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+      transition: all 0.3s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      min-height: 250px;
+    }
+
+    /* STATUS COLOR CODES */
+    .table-card.available {
+      border-left: 5px solid var(--success);
+    }
+    .table-card.occupied {
+      border-left: 5px solid var(--saffron);
+      box-shadow: 0 8px 25px rgba(224, 96, 0, 0.1);
+    }
+    .table-card.reserved {
+      border-left: 5px solid var(--purple);
+      box-shadow: 0 8px 25px rgba(168, 85, 247, 0.1);
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      padding-bottom: 0.5rem;
+    }
+
+    .table-name {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .table-status-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 8px;
+      border-radius: 12px;
+      letter-spacing: 0.5px;
+    }
+
+    .available .table-status-label { background: rgba(34, 197, 94, 0.1); color: var(--success); }
+    .occupied .table-status-label { background: rgba(224, 96, 0, 0.1); color: var(--saffron); }
+    .reserved .table-status-label { background: rgba(168, 85, 247, 0.1); color: var(--purple); }
+
+    .table-card-body {
+      font-size: 13px;
+      line-height: 1.5;
+      color: #bfa197;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+    }
+
+    .table-card-body strong {
+      color: #fff;
+    }
+
+    .order-items-summary {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 6px;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      border: 1px solid rgba(255,255,255,0.03);
+    }
+
+    .table-actions {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: auto;
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      padding-top: 0.75rem;
+    }
+
+    /* BUTTONS */
+    .btn-action {
+      background: var(--saffron);
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      transition: background 0.2s, transform 0.1s;
+      flex: 1;
+    }
+
+    .btn-action:hover {
+      background: #cf5608;
+    }
+
+    .btn-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      color: var(--dark);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    /* SECTION CARD */
+    .section-card {
+      background: var(--glass-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.4);
+      margin-bottom: 2.5rem;
+    }
+
+    .section-header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(224, 96, 0, 0.15);
+      padding-bottom: 0.75rem;
+    }
+
+    .section-header-row h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      color: var(--saffron);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* TABLES */
+    .table-container {
+      overflow-x: auto;
+      border-radius: 8px;
+      background: rgba(14, 6, 4, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th, td {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    th {
+      background: rgba(224, 96, 0, 0.08);
+      color: var(--saffron);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      font-size: 11px;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge-status {
+      padding: 0.25rem 0.6rem;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .badge-status.active { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+    .badge-status.leave { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
+    .badge-status.pending { background: rgba(217, 119, 6, 0.15); color: var(--gold); }
+    .badge-status.completed { background: rgba(34, 197, 94, 0.15); color: var(--success); }
+
+    .actions-cell {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .icon-btn {
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      font-size: 16px;
+      padding: 4px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    /* MODAL */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #1c0d08;
+      border: 1px solid var(--saffron);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 500px;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.8);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid rgba(224, 96, 0, 0.2);
+      padding-bottom: 0.75rem;
+    }
+
+    .modal-header h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      color: var(--saffron);
+    }
+
+    .modal-close {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      cursor: pointer;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .form-group label {
+      font-size: 12px;
+      font-weight: 500;
+      color: #8c7269;
+    }
+
+    .form-group input, .form-group select {
+      padding: 0.65rem 0.85rem;
+      background: rgba(0,0,0,0.3);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 6px;
+      color: #fff;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      outline: none;
+      border-color: var(--saffron);
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem;
+      color: #8c7269;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+
+    /* FOOTER */
+    footer {
+      background: rgba(14, 6, 4, 0.95);
+      padding: 2rem;
+      text-align: center;
+      border-top: 1px solid var(--border-color);
+      margin-top: auto;
+      font-size: 13px;
+      color: #7c5d53;
+    }
+
+    footer span {
+      color: var(--saffron);
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">Spice <span>Garden</span> Admin</div>
+    <div class="header-actions">
+      <a href="/customer" class="btn-nav">Customer Dashboard</a>
+      <a href="/" class="btn-nav">Main Site</a>
+    </div>
+  </header>
+
+  <div class="container">
+    <div class="page-title-row">
+      <h1>Admin Dashboard</h1>
+    </div>
+
+    <!-- STATS ROW -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div>
+          <div class="stat-title">Total Bookings</div>
+          <div class="stat-value" id="stat-bookings">-</div>
+        </div>
+        <div class="stat-sub">From bookings.json</div>
+      </div>
+      <div class="stat-card blue">
+        <div>
+          <div class="stat-title">Staff Members</div>
+          <div class="stat-value" id="stat-staff">-</div>
+        </div>
+        <div class="stat-sub">From staff.json</div>
+      </div>
+      <div class="stat-card green">
+        <div>
+          <div class="stat-title">Active Orders</div>
+          <div class="stat-value" id="stat-orders">-</div>
+        </div>
+        <div class="stat-sub">Pending kitchen orders</div>
+      </div>
+    </div>
+
+    <!-- TABS BAR -->
+    <div class="tabs-bar">
+      <button class="tab-btn active" onclick="switchTab('tab-floor', this)">📊 Live Table Map & Orders</button>
+      <button class="tab-btn" onclick="switchTab('tab-bookings', this)">📅 Reservations List</button>
+      <button class="tab-btn" onclick="switchTab('tab-staff', this)">👥 Staff Details</button>
+      <button class="tab-btn" onclick="switchTab('tab-orders', this)">🍔 Kitchen Orders List</button>
+    </div>
+
+    <!-- TAB 1: LIVE FLOOR MAP -->
+    <div class="tab-content active" id="tab-floor">
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2>📊 Real-time Table Grid & Active Orders</h2>
+          <p style="font-size: 13px; color: #bfa197;">Shows active orders and table bookings.</p>
+        </div>
+        <div class="floor-grid" id="floor-grid-container">
+          <!-- Dynamically populated tables -->
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: RESERVATIONS LIST -->
+    <div class="tab-content" id="tab-bookings">
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2>📅 Table Bookings</h2>
+        </div>
+        <div class="table-container">
+          <table id="bookings-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Date & Time</th>
+                <th>Guests</th>
+                <th>Seating Preference</th>
+                <th>Special Notes</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="bookings-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: STAFF DETAILS -->
+    <div class="tab-content" id="tab-staff">
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2>👥 Staff Details</h2>
+          <button class="btn-action" style="flex: none;" onclick="openStaffModal()">➕ Add Staff</button>
+        </div>
+        <div class="table-container">
+          <table id="staff-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Role</th>
+                <th>Contact</th>
+                <th>Shift</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="staff-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: KITCHEN ORDERS -->
+    <div class="tab-content" id="tab-orders">
+      <div class="section-card">
+        <div class="section-header-row">
+          <h2>🍔 Kitchen Orders List</h2>
+        </div>
+        <div class="table-container">
+          <table id="orders-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Table</th>
+                <th>Customer Name</th>
+                <th>Phone</th>
+                <th>Items Ordered</th>
+                <th>Total Amount</th>
+                <th>Time Placed</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="orders-tbody">
+              <!-- Populated dynamically -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STAFF MODAL -->
+  <div class="modal" id="staff-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Add New Staff</h3>
+        <button class="modal-close" onclick="closeStaffModal()">✕</button>
+      </div>
+      <form id="staff-form" onsubmit="saveStaff(event)">
+        <input type="hidden" id="staff-id">
+        <div class="form-group">
+          <label for="staff-name">Full Name *</label>
+          <input type="text" id="staff-name" required placeholder="e.g. John Doe">
+        </div>
+        <div class="form-group">
+          <label for="staff-role">Role *</label>
+          <select id="staff-role" required>
+            <option value="">Select Role</option>
+            <option value="Head Chef">Head Chef</option>
+            <option value="Sous Chef">Sous Chef</option>
+            <option value="Pastry Chef">Pastry Chef</option>
+            <option value="Kitchen Helper">Kitchen Helper</option>
+            <option value="Front of House Manager">Front of House Manager</option>
+            <option value="Server">Server</option>
+            <option value="Host/Hostess">Host/Hostess</option>
+            <option value="Cleaner">Cleaner</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="staff-contact">Contact Number</label>
+          <input type="text" id="staff-contact" placeholder="e.g. +91 98765 43210">
+        </div>
+        <div class="form-group">
+          <label for="staff-shift">Shift Preference</label>
+          <select id="staff-shift">
+            <option value="Morning">Morning</option>
+            <option value="Evening">Evening</option>
+            <option value="Full Day">Full Day</option>
+            <option value="Night">Night</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="staff-status">Status</label>
+          <select id="staff-status">
+            <option value="Active">Active</option>
+            <option value="On Leave">On Leave</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action btn-secondary" onclick="closeStaffModal()">Cancel</button>
+          <button type="submit" class="btn-action">Save Staff</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer>
+    <p>© 2025 <span>Spice Garden</span> · Admin Dashboard Portal</p>
+  </footer>
+
+  <script>
+    let currentBookings = [];
+    let currentStaff = [];
+    let currentOrders = [];
+
+    // Default static table map layout
+    const tablesMapList = [
+      { id: "Table 1", label: "Table 1", type: "Standard" },
+      { id: "Table 2", label: "Table 2", type: "Standard" },
+      { id: "Table 3", label: "Table 3", type: "Standard" },
+      { id: "Table 4", label: "Table 4", type: "Standard" },
+      { id: "Table 5", label: "Table 5", type: "Standard" },
+      { id: "Table 6", label: "Table 6", type: "Standard" },
+      { id: "Table 7", label: "Table 7", type: "Standard" },
+      { id: "Table 8", label: "Table 8", type: "Standard" },
+      { id: "Table 9", label: "Table 9", type: "Standard" },
+      { id: "Table 10", label: "Table 10", type: "Standard" },
+      { id: "Couple's Art Area", label: "Couple's Art Area", type: "Romantic" },
+      { id: "Kids Play Area", label: "Kids Play Area", type: "Family" }
+    ];
+
+    async function loadData() {
+      try {
+        // Bookings
+        const bookingsRes = await fetch('/api/bookings');
+        const bookingsData = await bookingsRes.json();
+        currentBookings = bookingsData.bookings || [];
+        renderBookings();
+
+        // Staff
+        const staffRes = await fetch('/api/staff');
+        const staffData = await staffRes.json();
+        currentStaff = staffData.staff || [];
+        renderStaff();
+
+        // Orders
+        const ordersRes = await fetch('/api/orders');
+        const ordersData = await ordersRes.json();
+        currentOrders = ordersData.orders || [];
+        renderOrders();
+
+        // Table Map Grid
+        renderFloorMap();
+
+        // Summary Statistics
+        updateStats();
+      } catch (err) {
+        console.error("Error loading dashboard data:", err);
+      }
+    }
+
+    function updateStats() {
+      document.getElementById('stat-bookings').textContent = currentBookings.length;
+      document.getElementById('stat-staff').textContent = currentStaff.length;
+      const pendingCount = currentOrders.filter(o => o.status.toLowerCase() === 'pending').length;
+      document.getElementById('stat-orders').textContent = pendingCount;
+    }
+
+    /* RENDER LIVE FLOOR MAP */
+    function renderFloorMap() {
+      const container = document.getElementById('floor-grid-container');
+      
+      container.innerHTML = tablesMapList.map(table => {
+        // Find matching active orders (Pending only) for this table
+        // We match by table id e.g. "Table 5" or sub strings.
+        const activeOrder = currentOrders.find(o => 
+          o.status.toLowerCase() === 'pending' && 
+          o.table.toLowerCase().trim() === table.id.toLowerCase().trim()
+        );
+
+        // Find bookings matching this table preference
+        // e.g. seating preference equals Couple's Art Area or Kids Play Area or window seat
+        const activeBooking = currentBookings.find(b => 
+          b.seating.toLowerCase().trim() === table.id.toLowerCase().trim()
+        );
+
+        let status = 'available';
+        let statusText = 'Available';
+        let bodyContent = `<p style="margin-top: 1rem; color: #8c7269;">Table is currently free.</p>`;
+        let actions = '';
+
+        if (activeOrder) {
+          status = 'occupied';
+          statusText = 'Occupied';
+          const itemsText = activeOrder.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+          bodyContent = `
+            <div style="margin-top: 0.5rem;">
+              <p>👤 <strong>Customer:</strong> ${escapeHtml(activeOrder.name)}</p>
+              ${activeOrder.phone ? `<p>📞 <strong>Phone:</strong> ${escapeHtml(activeOrder.phone)}</p>` : ''}
+              <p style="color: var(--saffron); font-weight: 600;">💰 Total: ₹${activeOrder.total}</p>
+              <div class="order-items-summary">
+                <strong>Ordered:</strong> ${escapeHtml(itemsText)}
+              </div>
+            </div>
+          `;
+          actions = `
+            <button class="btn-action" onclick="updateOrderStatus(${activeOrder.id}, 'Completed')">Complete Order</button>
+          `;
+        } else if (activeBooking) {
+          status = 'reserved';
+          statusText = 'Reserved';
+          bodyContent = `
+            <div style="margin-top: 0.5rem;">
+              <p>👤 <strong>Guest:</strong> ${escapeHtml(activeBooking.name)}</p>
+              <p>📞 <strong>Phone:</strong> ${escapeHtml(activeBooking.phone)}</p>
+              <p>🕒 <strong>Time:</strong> ${activeBooking.date} at ${activeBooking.time}</p>
+              <p>👥 <strong>Guests:</strong> ${escapeHtml(activeBooking.guests)}</p>
+              ${activeBooking.notes ? `<p style="font-size: 11px; margin-top: 4px;">📝 <strong>Notes:</strong> ${escapeHtml(activeBooking.notes)}</p>` : ''}
+            </div>
+          `;
+          actions = `
+            <button class="btn-action btn-danger" onclick="deleteBooking(${activeBooking.id})">Cancel Res.</button>
+          `;
+        }
+
+        return `
+          <div class="table-card ${status}">
+            <div>
+              <div class="table-header">
+                <span class="table-name">${table.label}</span>
+                <span class="table-status-label">${statusText}</span>
+              </div>
+              <div class="table-card-body">
+                <p>Type: <strong>${table.type}</strong></p>
+                ${bodyContent}
+              </div>
+            </div>
+            ${actions ? `<div class="table-actions">${actions}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderBookings() {
+      const tbody = document.getElementById('bookings-tbody');
+      if (currentBookings.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-state"><div class="empty-state-icon">📅</div>No table bookings made yet.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = currentBookings.map(b => {
+        return `
+          <tr>
+            <td>#${b.id.toString().slice(-6)}</td>
+            <td style="font-weight: 600;">${escapeHtml(b.name)}</td>
+            <td>${escapeHtml(b.phone)}</td>
+            <td>${b.date} at ${b.time}</td>
+            <td>${escapeHtml(b.guests)}</td>
+            <td>${escapeHtml(b.seating)}</td>
+            <td style="max-width: 200px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${escapeHtml(b.notes || '-')}</td>
+            <td>
+              <button class="icon-btn btn-danger" onclick="deleteBooking(${b.id})" title="Cancel Booking">🗑️</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderStaff() {
+      const tbody = document.getElementById('staff-tbody');
+      if (currentStaff.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-state"><div class="empty-state-icon">👥</div>No staff members found.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = currentStaff.map(s => {
+        const statusClass = s.status === 'Active' ? 'active' : 'leave';
+        return `
+          <tr>
+            <td>#${s.id.toString().slice(-4)}</td>
+            <td style="font-weight: 600;">${escapeHtml(s.name)}</td>
+            <td>${escapeHtml(s.role)}</td>
+            <td>${escapeHtml(s.contact || '-')}</td>
+            <td>${s.shift}</td>
+            <td><span class="badge-status ${statusClass}">${s.status}</span></td>
+            <td>
+              <div class="actions-cell">
+                <button class="icon-btn" onclick="editStaff(${s.id})" title="Edit Staff">✏️</button>
+                <button class="icon-btn btn-danger" onclick="deleteStaff(${s.id})" title="Delete Staff">🗑️</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function renderOrders() {
+      const tbody = document.getElementById('orders-tbody');
+      if (currentOrders.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="empty-state"><div class="empty-state-icon">🍔</div>No kitchen orders received.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = currentOrders.map(o => {
+        const timeFormatted = new Date(o.orderedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const itemsList = o.items.map(i => `${i.name} (x${i.qty})`).join(', ');
+        const statusClass = o.status.toLowerCase() === 'pending' ? 'pending' : 'completed';
+
+        return `
+          <tr>
+            <td>#${o.id.toString().slice(-6)}</td>
+            <td style="font-weight: 600;">${escapeHtml(o.table)}</td>
+            <td>${escapeHtml(o.name)}</td>
+            <td>${escapeHtml(o.phone || '-')}</td>
+            <td style="max-width: 300px; font-size: 13px;">${escapeHtml(itemsList)}</td>
+            <td style="font-weight: 600; color: var(--saffron);">₹${o.total}</td>
+            <td>${timeFormatted}</td>
+            <td><span class="badge-status ${statusClass}">${o.status}</span></td>
+            <td>
+              <div class="actions-cell">
+                ${o.status.toLowerCase() === 'pending' 
+                  ? `<button class="btn-action" style="padding: 0.25rem 0.5rem; font-size: 11px;" onclick="updateOrderStatus(${o.id}, 'Completed')">Complete</button>` 
+                  : `✓ Ready`
+                }
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    // ACTIONS
+    async function deleteBooking(id) {
+      if (!confirm("Are you sure you want to cancel this booking?")) return;
+      try {
+        const res = await fetch('/api/booking/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadData();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        alert("Failed to delete booking.");
+      }
+    }
+
+    async function deleteStaff(id) {
+      if (!confirm("Are you sure you want to remove this staff member?")) return;
+      try {
+        const res = await fetch('/api/staff/delete', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadData();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        alert("Failed to delete staff.");
+      }
+    }
+
+    function editStaff(id) {
+      const s = currentStaff.find(item => item.id === id);
+      if (!s) return;
+
+      document.getElementById('staff-id').value = s.id;
+      document.getElementById('staff-name').value = s.name;
+      document.getElementById('staff-role').value = s.role;
+      document.getElementById('staff-contact').value = s.contact || '';
+      document.getElementById('staff-shift').value = s.shift || 'Morning';
+      document.getElementById('staff-status').value = s.status || 'Active';
+
+      document.getElementById('modal-title').textContent = "Edit Staff Details";
+      document.getElementById('staff-modal').classList.add('active');
+    }
+
+    function openStaffModal() {
+      document.getElementById('staff-id').value = '';
+      document.getElementById('staff-name').value = '';
+      document.getElementById('staff-role').value = '';
+      document.getElementById('staff-contact').value = '';
+      document.getElementById('staff-shift').value = 'Morning';
+      document.getElementById('staff-status').value = 'Active';
+
+      document.getElementById('modal-title').textContent = "Add New Staff";
+      document.getElementById('staff-modal').classList.add('active');
+    }
+
+    function closeStaffModal() {
+      document.getElementById('staff-modal').classList.remove('active');
+    }
+
+    async function saveStaff(e) {
+      e.preventDefault();
+      const id = document.getElementById('staff-id').value;
+      const name = document.getElementById('staff-name').value.trim();
+      const role = document.getElementById('staff-role').value;
+      const contact = document.getElementById('staff-contact').value.trim();
+      const shift = document.getElementById('staff-shift').value;
+      const status = document.getElementById('staff-status').value;
+
+      try {
+        const payload = { name, role, contact, shift, status };
+        if (id) {
+          payload.id = id;
+        }
+
+        const res = await fetch('/api/staff', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data.success) {
+          closeStaffModal();
+          loadData();
+        } else {
+          alert("Error saving: " + data.message);
+        }
+      } catch (err) {
+        alert("Server error saving staff.");
+      }
+    }
+
+    async function updateOrderStatus(id, status) {
+      try {
+        const res = await fetch('/api/order/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, status })
+        });
+        const data = await res.json();
+        if (data.success) {
+          loadData();
+        } else {
+          alert("Error: " + data.message);
+        }
+      } catch (err) {
+        alert("Failed to update status.");
+      }
+    }
+
+    // TABS NAVIGATION
+    function switchTab(tabId, btn) {
+      // Hide all contents
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      // Remove active button class
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+
+      // Show target content
+      document.getElementById(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    // UTILS
+    function escapeHtml(str) {
+      if (!str) return '';
+      return str.replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+    }
+
+    // Init
+    window.addEventListener('DOMContentLoaded', loadData);
+  </script>
+</body>
+</html>
