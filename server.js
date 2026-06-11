@@ -7,9 +7,10 @@ const os   = require('os');
 
 const PORT    = 3000;
 const HOST    = '0.0.0.0';   // listen on ALL interfaces (LAN + localhost)
-const DATA_FILE   = path.join(__dirname, 'bookings.json');
-const ORDERS_FILE = path.join(__dirname, 'orders.json');
-const STAFF_FILE  = path.join(__dirname, 'staff.json');
+const isVercel = !!process.env.VERCEL;
+const DATA_FILE   = isVercel ? '/tmp/bookings.json' : path.join(__dirname, 'bookings.json');
+const ORDERS_FILE = isVercel ? '/tmp/orders.json' : path.join(__dirname, 'orders.json');
+const STAFF_FILE  = isVercel ? '/tmp/staff.json' : path.join(__dirname, 'staff.json');
 const PUBLIC      = __dirname;
 
 function cleanPhone(p) {
@@ -33,9 +34,20 @@ function getLanIP() {
 const LAN_IP = getLanIP();
 
 // Ensure data files exist
-if (!fs.existsSync(DATA_FILE))   fs.writeFileSync(DATA_FILE, '[]', 'utf8');
-if (!fs.existsSync(ORDERS_FILE)) fs.writeFileSync(ORDERS_FILE, '[]', 'utf8');
-if (!fs.existsSync(STAFF_FILE))  fs.writeFileSync(STAFF_FILE, '[]', 'utf8');
+function ensureFileExists(targetPath, srcName) {
+  if (!fs.existsSync(targetPath)) {
+    let initialData = '[]';
+    const srcPath = path.join(__dirname, srcName);
+    if (fs.existsSync(srcPath)) {
+      initialData = fs.readFileSync(srcPath, 'utf8');
+    }
+    fs.writeFileSync(targetPath, initialData, 'utf8');
+  }
+}
+
+ensureFileExists(DATA_FILE, 'bookings.json');
+ensureFileExists(ORDERS_FILE, 'orders.json');
+ensureFileExists(STAFF_FILE, 'staff.json');
 
 // MIME types
 const MIME = {
@@ -72,7 +84,7 @@ function readBody(req) {
   });
 }
 
-const server = http.createServer(async (req, res) => {
+const handler = async (req, res) => {
   const parsed   = url.parse(req.url, true);
   const pathname = parsed.pathname;
 
@@ -355,18 +367,24 @@ const server = http.createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': mime, 'Cache-Control': 'no-cache' });
     res.end(content);
   });
-});
+};
 
-server.listen(PORT, HOST, () => {
-  console.log('');
-  console.log('╔══════════════════════════════════════════════════════╗');
-  console.log("║        👨‍🍳  Nandhu's Kitchen — Server Running         ║");
-  console.log('╠══════════════════════════════════════════════════════╣');
-  console.log(`║  Local:    http://localhost:${PORT}                     ║`);
-  console.log(`║  Network:  http://${LAN_IP}:${PORT}              ║`);
-  console.log('║                                                      ║');
-  console.log('║  QR codes → auto-point to your real LAN IP above 🔗  ║');
-  console.log('║  Kitchen:  http://localhost:3000/kitchen             ║');
-  console.log('╚══════════════════════════════════════════════════════╝');
-  console.log('');
-});
+// Create server for local running
+if (require.main === module || !process.env.VERCEL) {
+  const server = http.createServer(handler);
+  server.listen(PORT, HOST, () => {
+    console.log('');
+    console.log('╔══════════════════════════════════════════════════════╗');
+    console.log("║        👨‍🍳  Nandhu's Kitchen — Server Running         ║");
+    console.log('╠══════════════════════════════════════════════════════╣');
+    console.log(`║  Local:    http://localhost:${PORT}                     ║`);
+    console.log(`║  Network:  http://${LAN_IP}:${PORT}              ║`);
+    console.log('║                                                      ║');
+    console.log('║  QR codes → auto-point to your real LAN IP above 🔗  ║');
+    console.log('║  Kitchen:  http://localhost:3000/kitchen             ║');
+    console.log('╚══════════════════════════════════════════════════════╝');
+    console.log('');
+  });
+}
+
+module.exports = handler;
