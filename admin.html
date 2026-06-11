@@ -574,7 +574,7 @@
     <form onsubmit="handleAdminLogin(event)">
       <div class="form-group" style="margin-bottom: 1rem; text-align: left; display: flex; flex-direction: column; gap: 0.4rem;">
         <label for="admin-username" style="color: #8c7269; font-size: 12px; font-weight: 500;">Username</label>
-        <input type="text" id="admin-username" required placeholder="admin" style="padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; width: 100%;">
+        <input type="text" id="admin-username" required placeholder="nandhu" style="padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; width: 100%;">
       </div>
       <div class="form-group" style="margin-bottom: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 0.4rem;">
         <label for="admin-password" style="color: #8c7269; font-size: 12px; font-weight: 500;">Password</label>
@@ -1172,7 +1172,7 @@
       const errorMsg = document.getElementById('login-error-msg');
 
       // Simple admin credentials
-      if (user === 'admin' && pass === 'admin123') {
+      if (user === 'nandhu' && pass === 'nandhu123') {
         errorMsg.style.display = 'none';
         sessionStorage.setItem('adminLoggedIn', 'true');
         checkAdminSession();
