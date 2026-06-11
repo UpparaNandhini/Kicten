@@ -1124,11 +1124,12 @@ function handleScannedCode(qrText) {
   const foundDish = dishes.find(d => d.id === dishId || d.name.toLowerCase() === qrText.toLowerCase());
   
   if (foundDish) {
-    showScanStatus(`✓ Dish found! Opening ${foundDish.name}...`, 'success');
+    showScanStatus(`✓ Added ${foundDish.name} to cart!`, 'success');
+    addCart(null, foundDish.id);
     setTimeout(() => {
       closeQRScanner();
-      showDishDetail(foundDish.id);
-    }, 500);
+      openCartModal();
+    }, 800);
     return;
   }
   
