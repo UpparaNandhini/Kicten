@@ -561,10 +561,33 @@
     <div class="header-actions">
       <a href="/customer" class="btn-nav">Customer Dashboard</a>
       <a href="/" class="btn-nav">Main Site</a>
+      <button class="btn-nav" id="admin-logout-btn" onclick="adminLogout()" style="display: none;">Log Out</button>
     </div>
   </header>
 
-  <div class="container">
+  <!-- ADMIN LOGIN PANEL -->
+  <div class="login-container" id="admin-login-panel" style="display: none; max-width: 400px; width: 90%; margin: auto; padding: 2.5rem; background: var(--glass-bg); border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6); text-align: center; z-index: 1; flex-direction: column; gap: 1.5rem;">
+    <div>
+      <h2 style="font-family: 'Playfair Display', serif; font-size: 2rem; color: #fff;">Admin Login</h2>
+      <p style="margin-top: 0.5rem; color: #bfa197; font-size: 14px; line-height: 1.5;">Access the Nandhu's Kitchen Administrator Dashboard</p>
+    </div>
+    <form onsubmit="handleAdminLogin(event)">
+      <div class="form-group" style="margin-bottom: 1rem; text-align: left; display: flex; flex-direction: column; gap: 0.4rem;">
+        <label for="admin-username" style="color: #8c7269; font-size: 12px; font-weight: 500;">Username</label>
+        <input type="text" id="admin-username" required placeholder="admin" style="padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; width: 100%;">
+      </div>
+      <div class="form-group" style="margin-bottom: 1.5rem; text-align: left; display: flex; flex-direction: column; gap: 0.4rem;">
+        <label for="admin-password" style="color: #8c7269; font-size: 12px; font-weight: 500;">Password</label>
+        <input type="password" id="admin-password" required placeholder="••••••••" style="padding: 0.65rem 0.85rem; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: #fff; font-family: 'DM Sans', sans-serif; font-size: 14px; width: 100%;">
+      </div>
+      <div id="login-error-msg" style="color: var(--danger); font-size: 13px; display: none; margin-bottom: 1rem; text-align: left;">
+        ⚠ Invalid username or password.
+      </div>
+      <button type="submit" class="btn-action" style="width: 100%; padding: 0.8rem; font-size: 14px; font-weight: 700; border-radius: 6px;">Log In</button>
+    </form>
+  </div>
+
+  <div class="container" id="admin-dashboard-container" style="display: none;">
     <div class="page-title-row">
       <h1>Admin Dashboard</h1>
     </div>
@@ -1123,8 +1146,48 @@
                 .replace(/'/g, "&#039;");
     }
 
+    // Session Auth checks
+    function checkAdminSession() {
+      const isLogged = sessionStorage.getItem('adminLoggedIn');
+      const loginPanel = document.getElementById('admin-login-panel');
+      const dashboardContainer = document.getElementById('admin-dashboard-container');
+      const logoutBtn = document.getElementById('admin-logout-btn');
+
+      if (isLogged === 'true') {
+        loginPanel.style.display = 'none';
+        dashboardContainer.style.display = 'block';
+        logoutBtn.style.display = 'inline-flex';
+        loadData(); // Load actual data
+      } else {
+        loginPanel.style.display = 'flex';
+        dashboardContainer.style.display = 'none';
+        logoutBtn.style.display = 'none';
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('admin-username').value.trim();
+      const pass = document.getElementById('admin-password').value.trim();
+      const errorMsg = document.getElementById('login-error-msg');
+
+      // Simple admin credentials
+      if (user === 'admin' && pass === 'admin123') {
+        errorMsg.style.display = 'none';
+        sessionStorage.setItem('adminLoggedIn', 'true');
+        checkAdminSession();
+      } else {
+        errorMsg.style.display = 'block';
+      }
+    }
+
+    function adminLogout() {
+      sessionStorage.removeItem('adminLoggedIn');
+      checkAdminSession();
+    }
+
     // Init
-    window.addEventListener('DOMContentLoaded', loadData);
+    window.addEventListener('DOMContentLoaded', checkAdminSession);
   </script>
 </body>
 </html>
