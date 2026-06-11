@@ -755,6 +755,21 @@ function updateCartBadge() {
 function openCartModal() {
   renderCartItems();
   document.getElementById('cartModal').classList.add('active');
+  
+  // Pre-fill from localStorage
+  const storedName = localStorage.getItem('customerName');
+  const storedPhone = localStorage.getItem('customerPhone');
+  const scannedTable = localStorage.getItem('scannedTable');
+  
+  if (storedName && storedName !== 'Guest') {
+    document.getElementById('cartCustName').value = storedName;
+  }
+  if (storedPhone) {
+    document.getElementById('cartCustPhone').value = storedPhone;
+  }
+  if (scannedTable) {
+    document.getElementById('cartTableNum').value = scannedTable;
+  }
 }
 
 function closeCartModal() {
@@ -974,6 +989,38 @@ function makeQR(containerId, url) {
 makeQR('qrcode-menu', menuUrl);
 makeQR('qrcode-book', bookUrl);
 
+// URL Query Param Parser for Table ID
+window.addEventListener('DOMContentLoaded', () => {
+  const urlParams = new URLSearchParams(window.location.search);
+  const tableParam = urlParams.get('table');
+  if (tableParam) {
+    localStorage.setItem('scannedTable', tableParam);
+    
+    // Auto-prefill the booking seating preference if it matches a table name
+    const seatingSelect = document.getElementById('seating');
+    if (seatingSelect) {
+      for (let i = 0; i < seatingSelect.options.length; i++) {
+        if (seatingSelect.options[i].text.toLowerCase().trim() === tableParam.toLowerCase().trim()) {
+          seatingSelect.selectedIndex = i;
+          break;
+        }
+      }
+    }
+
+    // Pre-fill the cart table input if it exists
+    const tableInput = document.getElementById('cartTableNum');
+    if (tableInput) {
+      tableInput.value = tableParam;
+    }
+
+    // Scroll to the menu to let customer start ordering
+    setTimeout(() => {
+      scrollToId('menu');
+      alert(`Welcome! Sitting at ${tableParam}. We've locked in your table number for checkout.`);
+    }, 800);
+  }
+});
+
 // QR SCANNER FUNCTIONALITY
 function openQRScanner() {
   const modal = document.getElementById('qrModal');
@@ -1028,6 +1075,39 @@ function onQRCodeError(errorMessage) {
 
 function handleScannedCode(qrText) {
   const statusEl = document.getElementById('scanStatus');
+  
+  // Check if it's a URL containing table parameter
+  if (qrText.includes('table=')) {
+    try {
+      const urlObj = new URL(qrText);
+      const tableVal = urlObj.searchParams.get('table');
+      if (tableVal) {
+        localStorage.setItem('scannedTable', tableVal);
+        showScanStatus(`✓ Table identified: ${tableVal}!`, 'success');
+        setTimeout(() => {
+          closeQRScanner();
+          const tableInput = document.getElementById('cartTableNum');
+          if (tableInput) tableInput.value = tableVal;
+          scrollToId('menu');
+        }, 1000);
+        return;
+      }
+    } catch(e) {}
+  }
+  
+  // Check if scanned text itself matches standard table names
+  const qrLower = qrText.toLowerCase().trim();
+  if (qrLower.startsWith('table ') || qrLower === "couple's art area" || qrLower === "kids play area") {
+    localStorage.setItem('scannedTable', qrText);
+    showScanStatus(`✓ Table identified: ${qrText}!`, 'success');
+    setTimeout(() => {
+      closeQRScanner();
+      const tableInput = document.getElementById('cartTableNum');
+      if (tableInput) tableInput.value = qrText;
+      scrollToId('menu');
+    }, 1000);
+    return;
+  }
   
   // Check if it's a menu link
   if (qrText.includes('#menu') || qrText.includes('physical_menu_card.html')) {

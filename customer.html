@@ -660,6 +660,12 @@
     window.addEventListener('DOMContentLoaded', async () => {
       await fetchConfig();
       checkSession();
+      // Setup real-time polling every 4 seconds when customer is logged in
+      setInterval(() => {
+        if (activePhone) {
+          loadCustomerData();
+        }
+      }, 4000);
     });
 
     async function fetchConfig() {
